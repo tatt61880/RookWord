@@ -1,12 +1,14 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23';
+  const version = 'Version: 2022.04.23-b';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   window.addEventListener('load', init, false);
 
   const blockSize = 40;
+  const sizePoint = 3;
+  const sizeFirstPoint = 5;
 
   const table = [
     'あいうえお　',
@@ -74,7 +76,7 @@
       let pos = charPos[text[0]];
       if (pos === undefined) pos = charPos['×'];
 
-      const circle = createCircle({cx: pos.x, cy: pos.y, r: 4});
+      const circle = createCircle({cx: pos.x, cy: pos.y, r: sizeFirstPoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
@@ -85,7 +87,7 @@
       if (pos1 === undefined) pos1 = charPos['×'];
       if (pos2 === undefined) pos2 = charPos['×'];
 
-      const circle = createCircle({cx: pos2.x, cy: pos2.y, r: 3});
+      const circle = createCircle({cx: pos2.x, cy: pos2.y, r: sizePoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
@@ -108,22 +110,32 @@
     document.addEventListener('mouseup', updateResult, false);
 
     const g = document.createElementNS(SVG_NS, 'g');
+    {
+      const rect = createRect({x: 0, y: 0, width: 500, height: 300});
+      rect.setAttribute('fill', '#eee');
+      rect.setAttribute('stroke', 'none');
+      g.appendChild(rect);
+    }
     for (let col = 0; col < table.length; ++col) {
       for (let row = 0; row < 6; ++row) {
         const char = table[col][row];
         if (char == '　') continue;
-        const x = 430 - col * 40;
-        const y = 30 + row * 40;
+        const x = 440 - col * blockSize + (char == '×' ? -20 : 0);
+        const y = 20 + row * blockSize + (char == '×' ? 20 : 0);
         charPos[char] = {x: x + blockSize / 2, y: y + blockSize / 2};
 
         const rect = createRect({x: x, y: y, width: blockSize, height: blockSize});
-        rect.setAttribute('fill', 'none');
+        rect.setAttribute('fill', 'white');
         rect.setAttribute('stroke', 'black');
         rect.setAttribute('stroke-width', '2');
+        if (char == '×') {
+          rect.setAttribute('fill', '#fdd');
+        }
         g.appendChild(rect);
 
-        const text = createText({x: 438 - col * blockSize, y: 60 + row * blockSize, text: char});
+        const text = createText({x: x + 8, y: y + 30, text: char});
         text.setAttribute('font-size', '24px');
+        text.setAttribute('font-weight', 'bold');
         g.appendChild(text);
       }
     }
