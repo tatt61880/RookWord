@@ -19,6 +19,12 @@ h1 {
   background-color: pink;
 }
 
+h2 {
+  margin: 0px;
+  font-size: 18px;
+  background-color: skyblue;
+}
+
 svg {
   margin: 0px;
   padding: 0px;
