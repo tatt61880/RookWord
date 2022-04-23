@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-e';
+  const version = 'Version: 2022.04.23-f';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -9,6 +9,7 @@
   const blockSize = 40;
   const sizePoint = 3;
   const sizeFirstPoint = 5;
+  const charOther = '他';
 
   const table = [
     'あいうえお　',
@@ -21,7 +22,7 @@
     'や　ゆ　よ　',
     'らりるれろ　',
     'わ　　　を　',
-    'ん　　　　×',
+    'ん　　　　' + charOther,
   ];
 
   const charPos = {};
@@ -118,7 +119,7 @@
       char = dakutenToNormal(char);
     }
     let pos = charPos[char];
-    if (pos === undefined) pos = charPos['×'];
+    if (pos === undefined) pos = charPos[charOther];
     return pos;
   }
 
@@ -140,26 +141,28 @@
     const g = document.createElementNS(SVG_NS, 'g');
     g.setAttribute('id', 'result');
     const text = elemText.value;
+    let posPrev;
     if (text.length != 0) {
       const pos = getCharPos(text[0]);
+      posPrev = pos;
       const circle = createCircle({cx: pos.x, cy: pos.y, r: sizeFirstPoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
     }
     for (let i = 1; i < text.length; ++i) {
-      const pos1 = getCharPos(text[i - 1]);
-      const pos2 = getCharPos(text[i]);
-
-      const circle = createCircle({cx: pos2.x, cy: pos2.y, r: sizePoint});
+      const pos = getCharPos(text[i]);
+      const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
 
-      const line = createLine({x1: pos1.x, y1: pos1.y, x2: pos2.x, y2: pos2.y});
+      const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
       line.setAttribute('stroke', 'red');
       line.setAttribute('stroke-width', '1');
       g.appendChild(line);
+
+      posPrev = pos;
     }
     elemSvg.appendChild(g);
   }
@@ -190,16 +193,16 @@
       for (let row = 0; row < 6; ++row) {
         const char = table[col][row];
         if (char == '　') continue;
-        const x = 440 - col * blockSize + (char == '×' ? -20 : 0);
-        const y = 20 + row * blockSize + (char == '×' ? 20 : 0);
+        const x = 440 - col * blockSize + (char == charOther ? -20 : 0);
+        const y = 20 + row * blockSize + (char == charOther ? 20 : 0);
         charPos[char] = {x: x + blockSize / 2, y: y + blockSize / 2};
 
         const rect = createRect({x: x, y: y, width: blockSize, height: blockSize});
         rect.setAttribute('fill', 'white');
         rect.setAttribute('stroke', 'black');
         rect.setAttribute('stroke-width', '2');
-        if (char == '×') {
-          rect.setAttribute('fill', '#fdd');
+        if (char == charOther) {
+          rect.setAttribute('fill', '#fdf');
         }
         g.appendChild(rect);
 
