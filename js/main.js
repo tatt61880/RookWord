@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-c';
+  const version = 'Version: 2022.04.23-d';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -24,14 +24,18 @@
     'ん　　　　×',
   ];
 
+  const smallChars = 'ぁぃぅぇぉっゃゅょゎ';
+
   const charPos = {};
 
   let elemSvg;
   let elemText;
   let elemCheckboxKatakana;
+  let elemCheckboxSmall;
 
   // Option
   let optionKatakana;
+  let optionSmall;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -68,14 +72,31 @@
   }
 
   function katakanaToHiragana(char) {
-    return String.fromCharCode(char.charCodeAt(0) - 0x60);
+    const code = char.charCodeAt(0);
+    if (12448 < code) {
+      return String.fromCharCode(code - 0x60);
+    }
+    return char;
+  }
+
+  function smallToNormal(char) {
+    for (const smallChar of smallChars) {
+      if (char == smallChar) {
+        const code = char.charCodeAt(0);
+        return String.fromCharCode(code + 1);
+      }
+    }
+    return char;
   }
 
   function getCharPos(char) {
-    let pos = charPos[char];
     if (optionKatakana) {
-      if (pos === undefined) pos = charPos[katakanaToHiragana(char)];
+      char = katakanaToHiragana(char);
     }
+    if (optionSmall) {
+      char = smallToNormal(char);
+    }
+    let pos = charPos[char];
     if (pos === undefined) pos = charPos['×'];
     return pos;
   }
@@ -83,6 +104,7 @@
   // オプション用の変数を更新
   function updateOptions() {
     optionKatakana = elemCheckboxKatakana.checked;
+    optionSmall = elemCheckboxSmall.checked;
   }
 
   function updateResult() {
@@ -128,6 +150,8 @@
     elemText.addEventListener('change', updateResult, false);
     elemCheckboxKatakana = document.getElementById('checkboxKatakana');
     elemCheckboxKatakana.addEventListener('change', updateResult, false);
+    elemCheckboxSmall = document.getElementById('checkboxSmall');
+    elemCheckboxSmall.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
