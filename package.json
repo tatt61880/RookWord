@@ -1,0 +1,25 @@
+{
+  "name": "RookWord",
+  "version": "1.0.0",
+  "description": "RookWord by tatt61880",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tatt61880/RookWord.git"
+  },
+  "author": "@tatt61880",
+  "bugs": {
+    "url": "https://github.com/tatt61880/RookWord/issues"
+  },
+  "homepage": "https://github.com/tatt61880/RookWord#readme",
+  "scripts": {
+    "lint": "eslint js\\*.js --fix"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0"
+  },
+  "dependencies": {
+    "npm": "^6.14.6"
+  }
+}

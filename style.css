@@ -1,0 +1,26 @@
+html {
+  touch-action: manipulation;
+}
+
+body {
+  margin: 0px;
+}
+
+#contents {
+  margin: auto;
+  padding: 0px;
+  max-width: 500px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0px;
+  font-size: 18px;
+  background-color: pink;
+}
+
+svg {
+  margin: 0px;
+  padding: 0px;
+  user-select: none;
+}
