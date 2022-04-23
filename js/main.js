@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-d';
+  const version = 'Version: 2022.04.23-e';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -24,18 +24,17 @@
     'ん　　　　×',
   ];
 
-  const smallChars = 'ぁぃぅぇぉっゃゅょゎ';
-
   const charPos = {};
 
   let elemSvg;
   let elemText;
   let elemCheckboxKatakana;
   let elemCheckboxSmall;
+  let elemCheckboxDakuten;
 
-  // Option
   let optionKatakana;
   let optionSmall;
+  let optionDakuten;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -80,11 +79,30 @@
   }
 
   function smallToNormal(char) {
-    for (const smallChar of smallChars) {
-      if (char == smallChar) {
+    for (const c of 'ぁぃぅぇぉっゃゅょゎ') {
+      if (char == c) {
         const code = char.charCodeAt(0);
         return String.fromCharCode(code + 1);
       }
+    }
+    return char;
+  }
+
+  function dakutenToNormal(char) {
+    for (const c of 'がぎぐげござじずぜぞだぢづでどばびぶべぼ') {
+      if (char == c) {
+        const code = char.charCodeAt(0);
+        return String.fromCharCode(code - 1);
+      }
+    }
+    for (const c of 'ぱぴぷぺぽ') {
+      if (char == c) {
+        const code = char.charCodeAt(0);
+        return String.fromCharCode(code - 2);
+      }
+    }
+    if (char == 'ゔ') {
+      return 'う';
     }
     return char;
   }
@@ -96,6 +114,9 @@
     if (optionSmall) {
       char = smallToNormal(char);
     }
+    if (optionDakuten) {
+      char = dakutenToNormal(char);
+    }
     let pos = charPos[char];
     if (pos === undefined) pos = charPos['×'];
     return pos;
@@ -105,6 +126,7 @@
   function updateOptions() {
     optionKatakana = elemCheckboxKatakana.checked;
     optionSmall = elemCheckboxSmall.checked;
+    optionDakuten = elemCheckboxDakuten.checked;
   }
 
   function updateResult() {
@@ -152,6 +174,8 @@
     elemCheckboxKatakana.addEventListener('change', updateResult, false);
     elemCheckboxSmall = document.getElementById('checkboxSmall');
     elemCheckboxSmall.addEventListener('change', updateResult, false);
+    elemCheckboxDakuten = document.getElementById('checkboxDakuten');
+    elemCheckboxDakuten.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
