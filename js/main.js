@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-b';
+  const version = 'Version: 2022.04.23-c';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -28,6 +28,10 @@
 
   let elemSvg;
   let elemText;
+  let elemCheckboxKatakana;
+
+  // Option
+  let optionKatakana;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -63,7 +67,27 @@
     return text;
   }
 
+  function katakanaToHiragana(char) {
+    return String.fromCharCode(char.charCodeAt(0) - 0x60);
+  }
+
+  function getCharPos(char) {
+    let pos = charPos[char];
+    if (optionKatakana) {
+      if (pos === undefined) pos = charPos[katakanaToHiragana(char)];
+    }
+    if (pos === undefined) pos = charPos['×'];
+    return pos;
+  }
+
+  // オプション用の変数を更新
+  function updateOptions() {
+    optionKatakana = elemCheckboxKatakana.checked;
+  }
+
   function updateResult() {
+    updateOptions();
+
     // 過去の結果を削除
     const elemResult = document.getElementById('result');
     if (elemResult !== null) elemResult.remove();
@@ -73,19 +97,15 @@
     g.setAttribute('id', 'result');
     const text = elemText.value;
     if (text.length != 0) {
-      let pos = charPos[text[0]];
-      if (pos === undefined) pos = charPos['×'];
-
+      const pos = getCharPos(text[0]);
       const circle = createCircle({cx: pos.x, cy: pos.y, r: sizeFirstPoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
     }
     for (let i = 1; i < text.length; ++i) {
-      let pos1 = charPos[text[i - 1]];
-      let pos2 = charPos[text[i]];
-      if (pos1 === undefined) pos1 = charPos['×'];
-      if (pos2 === undefined) pos2 = charPos['×'];
+      const pos1 = getCharPos(text[i - 1]);
+      const pos2 = getCharPos(text[i]);
 
       const circle = createCircle({cx: pos2.x, cy: pos2.y, r: sizePoint});
       circle.setAttribute('fill', 'red');
@@ -106,6 +126,8 @@
     elemSvg = document.getElementById('svgMain');
     elemText = document.getElementById('inputText');
     elemText.addEventListener('change', updateResult, false);
+    elemCheckboxKatakana = document.getElementById('checkboxKatakana');
+    elemCheckboxKatakana.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
