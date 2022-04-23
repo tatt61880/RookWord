@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-f';
+  const version = 'Version: 2022.04.23-g';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -27,15 +27,19 @@
 
   const charPos = {};
 
+  let posPrev;
+
   let elemSvg;
   let elemText;
   let elemCheckboxKatakana;
   let elemCheckboxSmall;
   let elemCheckboxDakuten;
+  let elemCheckboxChoonpu;
 
   let optionKatakana;
   let optionSmall;
   let optionDakuten;
+  let optionChoonpu;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -73,7 +77,7 @@
 
   function katakanaToHiragana(char) {
     const code = char.charCodeAt(0);
-    if (12448 < code) {
+    if (0x30A1 <= code && code <= 0x30FA) {
       return String.fromCharCode(code - 0x60);
     }
     return char;
@@ -108,18 +112,45 @@
     return char;
   }
 
+  function isSamePos(pos1, pos2) {
+    return pos1.x == pos2.x && pos1.y == pos2.y;
+  }
+
+  function choonpuPos() {
+    if (isSamePos(posPrev, charPos['ん'])) return charPos['ん']; // 「んー」の場合は「ん」のまま。
+
+    for (const c of 'あいうえお') {
+      if (posPrev.y == charPos[c].y) {
+        return charPos[c];
+      }
+    }
+    return posPrev;
+  }
+
   function getCharPos(char) {
     if (optionKatakana) {
       char = katakanaToHiragana(char);
     }
+
     if (optionSmall) {
       char = smallToNormal(char);
     }
+
     if (optionDakuten) {
       char = dakutenToNormal(char);
     }
+
     let pos = charPos[char];
-    if (pos === undefined) pos = charPos[charOther];
+
+    if (optionChoonpu) {
+      if (char == 'ー') {
+        pos = choonpuPos();
+      }
+    }
+
+    if (pos === undefined) {
+      pos = charPos[charOther];
+    }
     return pos;
   }
 
@@ -128,6 +159,7 @@
     optionKatakana = elemCheckboxKatakana.checked;
     optionSmall = elemCheckboxSmall.checked;
     optionDakuten = elemCheckboxDakuten.checked;
+    optionChoonpu = elemCheckboxChoonpu.checked;
   }
 
   function updateResult() {
@@ -141,7 +173,7 @@
     const g = document.createElementNS(SVG_NS, 'g');
     g.setAttribute('id', 'result');
     const text = elemText.value;
-    let posPrev;
+    posPrev = charPos[charOther];
     if (text.length != 0) {
       const pos = getCharPos(text[0]);
       posPrev = pos;
@@ -179,6 +211,8 @@
     elemCheckboxSmall.addEventListener('change', updateResult, false);
     elemCheckboxDakuten = document.getElementById('checkboxDakuten');
     elemCheckboxDakuten.addEventListener('change', updateResult, false);
+    elemCheckboxChoonpu = document.getElementById('checkboxChoonpu');
+    elemCheckboxChoonpu.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
