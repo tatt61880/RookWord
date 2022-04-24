@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.24-c';
+  const version = 'Version: 2022.04.24-d';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -36,6 +36,7 @@
   let elemCheckboxDakuten;
   let elemCheckboxChoonpu;
   let elemCheckboxSamePos;
+  let elemCheckboxIgnoreSpace;
 
   let elemText;
   let elemSvg;
@@ -47,6 +48,7 @@
   let optionDakuten;
   let optionChoonpu;
   let optionSamePos;
+  let optionIgnoreSpace;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -168,6 +170,7 @@
     optionDakuten = elemCheckboxDakuten.checked;
     optionChoonpu = elemCheckboxChoonpu.checked;
     optionSamePos = elemCheckboxSamePos.checked;
+    optionIgnoreSpace = elemCheckboxIgnoreSpace.checked;
   }
 
   function isRookMove(pos1, pos2) {
@@ -192,6 +195,10 @@
     return dx == 1 && dy == 2 || dx == 2 && dy == 1;
   }
 
+  function isSpace(char) {
+    return char == ' ' || char == '　';
+  }
+
   function updateResult() {
     updateOptions();
 
@@ -213,8 +220,10 @@
     g.setAttribute('id', resultId);
     elemCharOther.style.display = 'none';
     posPrev = posOther;
-    for (let i = 0; i < text.length; ++i) {
-      const pos = getCharPos(text[i]);
+    let isFirstChar = true;
+    for (const char of text) {
+      if (optionIgnoreSpace && isSpace(char)) continue;
+      const pos = getCharPos(char);
       if (isSamePos(pos, posOther)) {
         elemCharOther.style.display = 'block';
         isRookWord = false;
@@ -223,12 +232,12 @@
         isQueenWord = false;
         isKnightWord = false;
       }
-      const circle = createCircle({cx: pos.x, cy: pos.y, r: i == 0 ? sizeFirstPoint : sizePoint});
+      const circle = createCircle({cx: pos.x, cy: pos.y, r: isFirstChar ? sizeFirstPoint : sizePoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
 
-      if (i != 0) {
+      if (!isFirstChar) {
         if (isRookWord && !isRookMove(pos, posPrev)) isRookWord = false;
         if (isBishopWord && !isBishopMove(pos, posPrev)) isBishopWord = false;
         if (isKingWord && !isKingMove(pos, posPrev)) isKingWord = false;
@@ -242,6 +251,7 @@
       }
 
       posPrev = pos;
+      isFirstChar = false;
     }
     elemSvg.appendChild(g);
 
@@ -278,6 +288,8 @@
     elemCheckboxChoonpu.addEventListener('change', updateResult, false);
     elemCheckboxSamePos = document.getElementById('checkboxSamePos');
     elemCheckboxSamePos.addEventListener('change', updateResult, false);
+    elemCheckboxIgnoreSpace = document.getElementById('checkboxIgnoreSpace');
+    elemCheckboxIgnoreSpace.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 

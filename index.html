@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" href="./style.css?2022.04.23">
 
-  <script src="./js/main.js?2022.04.24-c"></script>
+  <script src="./js/main.js?2022.04.24-d"></script>
 </head>
 
 <body>
@@ -32,22 +32,29 @@
     <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する。</label><br>
     <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う。</label><br>
     <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する。</label><br>
+    <input type="checkbox" id="checkboxIgnoreSpace" checked> <label for="checkboxIgnoreSpace">半角空白・全角空白を無視する。</label><br>
   </div>
 
   <h2>これは何？</h2>
-  <p>
-  「ルーク語」を探すのを支援するツールです。<br>
-  【ルーク語】 「いあいぎり」や「かくう」のように五十音表をルークが動いた時に成立する単語群。(ダブリングさんにより命名)<br>
-  参考: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)のツイート</a><br>
-  <br>
+  <div>
+  「ルーク語」を探すのを支援するツールです。
+  </div>
+  <div style="border: solid 1px black; margin:5px">
+  【ルーク語】<br>
+  五十音表をチェスの盤面と見立てて、<br>
+  ルークの駒が動いた時に成立する単語群。<br>
+  例：「いあいぎり」「かくう」「ルークご」<br>
+  <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">命名者 ダブリングさん(@saikoro2357)のツイート</a>
+  </div>
+  <div>
   入力した文字を線で結びます。<br>
   表に存在しない文字はすべて <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
   <br>
-  ルーク、ビショップ、キング、クイーン、ナイトの判定を行います。<br>
-  複数当てはまる場合の優先順位は、<br>
-  ルーク、ビショップ、キング、クイーン、ナイトの順です。<br>
-  ※いずれも、同じ文字2連続の場合はダメという判定です。<br>
-  </p>
+  ビショップ、キング、クイーン、ナイトの判定も行います。<br>
+  複数当てはまる場合は1つだけ結果を表示します。<br>
+  優先順位は、<br>
+  ルーク＞ビショップ＞キング＞クイーン＞ナイトです。<br>
+  </div>
 
   <h2>このツールの作者</h2>
   <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a>
