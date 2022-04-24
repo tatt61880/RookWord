@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.23-g';
+  const version = 'Version: 2022.04.24';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -12,22 +12,24 @@
   const charOther = '他';
 
   const table = [
-    'あいうえお　',
-    'かきくけこ　',
-    'さしすせそ　',
-    'たちつてと　',
-    'なにぬねの　',
-    'はひふへほ　',
-    'まみむめも　',
-    'や　ゆ　よ　',
-    'らりるれろ　',
-    'わ　　　を　',
-    'ん　　　　' + charOther,
+    'あいうえお',
+    'かきくけこ',
+    'さしすせそ',
+    'たちつてと',
+    'なにぬねの',
+    'はひふへほ',
+    'まみむめも',
+    'や　ゆ　よ',
+    'らりるれろ',
+    'わ　　　を',
+    'ん　　　' + charOther,
   ];
 
   const charPos = {};
 
   let posPrev;
+  let posOther;
+  const classOther = 'other';
 
   let elemSvg;
   let elemText;
@@ -35,6 +37,8 @@
   let elemCheckboxSmall;
   let elemCheckboxDakuten;
   let elemCheckboxChoonpu;
+  let elemResultInfo;
+  let elemCharOther;
 
   let optionKatakana;
   let optionSmall;
@@ -149,7 +153,7 @@
     }
 
     if (pos === undefined) {
-      pos = charPos[charOther];
+      pos = posOther;
     }
     return pos;
   }
@@ -162,49 +166,66 @@
     optionChoonpu = elemCheckboxChoonpu.checked;
   }
 
+  function isRookMove(pos1, pos2) {
+    return pos1.x == pos2.x || pos1.y == pos2.y;
+  }
+
   function updateResult() {
     updateOptions();
 
+    const text = elemText.value;
+    let isRookWord = text.length != 0;
+
+    const resultId = 'result';
+
     // 過去の結果を削除
-    const elemResult = document.getElementById('result');
+    const elemResult = document.getElementById(resultId);
     if (elemResult !== null) elemResult.remove();
 
     // 現在の結果を追加
     const g = document.createElementNS(SVG_NS, 'g');
-    g.setAttribute('id', 'result');
-    const text = elemText.value;
-    posPrev = charPos[charOther];
-    if (text.length != 0) {
-      const pos = getCharPos(text[0]);
-      posPrev = pos;
-      const circle = createCircle({cx: pos.x, cy: pos.y, r: sizeFirstPoint});
-      circle.setAttribute('fill', 'red');
-      circle.setAttribute('stroke', 'none');
-      g.appendChild(circle);
-    }
-    for (let i = 1; i < text.length; ++i) {
+    g.setAttribute('id', resultId);
+    elemCharOther.style.display = 'none';
+    posPrev = posOther;
+    for (let i = 0; i < text.length; ++i) {
       const pos = getCharPos(text[i]);
-      const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
+      if (isSamePos(pos, posOther)) {
+        elemCharOther.style.display = 'block';
+        isRookWord = false;
+      }
+      const circle = createCircle({cx: pos.x, cy: pos.y, r: i == 0 ? sizeFirstPoint : sizePoint});
       circle.setAttribute('fill', 'red');
       circle.setAttribute('stroke', 'none');
       g.appendChild(circle);
 
-      const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
-      line.setAttribute('stroke', 'red');
-      line.setAttribute('stroke-width', '1');
-      g.appendChild(line);
+      if (i != 0) {
+        if (isRookWord && !isRookMove(pos, posPrev)) isRookWord = false;
+
+        const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
+        line.setAttribute('stroke', 'red');
+        line.setAttribute('stroke-width', '1');
+        g.appendChild(line);
+      }
 
       posPrev = pos;
     }
     elemSvg.appendChild(g);
+
+    elemResultInfo.innerText = '';
+    if (isRookWord) {
+      elemResultInfo.innerText = `♖「${text}」はルーク語です。♜`;
+    } else {
+      elemResultInfo.innerText = '　';
+    }
   }
 
   function init() {
     document.getElementById('versionInfo').innerText = version;
 
-    elemSvg = document.getElementById('svgMain');
     elemText = document.getElementById('inputText');
     elemText.addEventListener('change', updateResult, false);
+    elemSvg = document.getElementById('svgMain');
+
     elemCheckboxKatakana = document.getElementById('checkboxKatakana');
     elemCheckboxKatakana.addEventListener('change', updateResult, false);
     elemCheckboxSmall = document.getElementById('checkboxSmall');
@@ -216,19 +237,21 @@
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
-    const g = document.createElementNS(SVG_NS, 'g');
+    elemResultInfo = document.getElementById('resultInfo');
+
     {
-      const rect = createRect({x: 0, y: 0, width: 500, height: 300});
+      const rect = createRect({x: 0, y: 0, width: 480, height: 240});
       rect.setAttribute('fill', '#eee');
       rect.setAttribute('stroke', 'none');
-      g.appendChild(rect);
+      elemSvg.appendChild(rect);
     }
     for (let col = 0; col < table.length; ++col) {
-      for (let row = 0; row < 6; ++row) {
+      for (let row = 0; row < 5; ++row) {
+        const g = document.createElementNS(SVG_NS, 'g');
         const char = table[col][row];
         if (char == '　') continue;
-        const x = 440 - col * blockSize + (char == charOther ? -20 : 0);
-        const y = 20 + row * blockSize + (char == charOther ? 20 : 0);
+        const x = 420 - col * blockSize + (char == charOther ? blockSize * 0.5 : 0);
+        const y = 20 + row * blockSize + (char == charOther ? -blockSize * 1.5 : 0);
         charPos[char] = {x: x + blockSize / 2, y: y + blockSize / 2};
 
         const rect = createRect({x: x, y: y, width: blockSize, height: blockSize});
@@ -237,15 +260,21 @@
         rect.setAttribute('stroke-width', '2');
         if (char == charOther) {
           rect.setAttribute('fill', '#fdf');
+          elemCharOther = g;
         }
         g.appendChild(rect);
 
         const text = createText({x: x + 8, y: y + 30, text: char});
         text.setAttribute('font-size', '24px');
         text.setAttribute('font-weight', 'bold');
+        if (char == charOther) {
+          text.classList.add(classOther);
+        }
         g.appendChild(text);
+        elemSvg.appendChild(g);
       }
     }
-    elemSvg.appendChild(g);
+
+    posOther = charPos[charOther];
   }
 })();
