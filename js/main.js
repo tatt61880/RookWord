@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.24';
+  const version = 'Version: 2022.04.24-b';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -167,7 +167,24 @@
   }
 
   function isRookMove(pos1, pos2) {
+    if (isSamePos(pos1, pos2)) return false;
     return pos1.x == pos2.x || pos1.y == pos2.y;
+  }
+  function isBishopMove(pos1, pos2) {
+    if (isSamePos(pos1, pos2)) return false;
+    return Math.abs(pos1.x - pos2.x) == Math.abs(pos1.y - pos2.y);
+  }
+  function isKingMove(pos1, pos2) {
+    if (isSamePos(pos1, pos2)) return false;
+    return Math.abs(pos1.x - pos2.x) <= blockSize && Math.abs(pos1.y - pos2.y) <= blockSize;
+  }
+  function isQueenMove(pos1, pos2) {
+    return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
+  }
+  function isKnightMove(pos1, pos2) {
+    const dx = Math.abs(pos1.x - pos2.x) / blockSize;
+    const dy = Math.abs(pos1.y - pos2.y) / blockSize;
+    return dx == 1 && dy == 2 || dx == 2 && dy == 1;
   }
 
   function updateResult() {
@@ -175,6 +192,10 @@
 
     const text = elemText.value;
     let isRookWord = text.length != 0;
+    let isBishopWord = text.length != 0;
+    let isKingWord = text.length != 0;
+    let isQueenWord = text.length != 0;
+    let isKnightWord = text.length != 0;
 
     const resultId = 'result';
 
@@ -192,6 +213,10 @@
       if (isSamePos(pos, posOther)) {
         elemCharOther.style.display = 'block';
         isRookWord = false;
+        isBishopWord = false;
+        isKingWord = false;
+        isQueenWord = false;
+        isKnightWord = false;
       }
       const circle = createCircle({cx: pos.x, cy: pos.y, r: i == 0 ? sizeFirstPoint : sizePoint});
       circle.setAttribute('fill', 'red');
@@ -200,6 +225,10 @@
 
       if (i != 0) {
         if (isRookWord && !isRookMove(pos, posPrev)) isRookWord = false;
+        if (isBishopWord && !isBishopMove(pos, posPrev)) isBishopWord = false;
+        if (isKingWord && !isKingMove(pos, posPrev)) isKingWord = false;
+        if (isQueenWord && !isQueenMove(pos, posPrev)) isQueenWord = false;
+        if (isKnightWord && !isKnightMove(pos, posPrev)) isKnightWord = false;
 
         const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
         line.setAttribute('stroke', 'red');
@@ -214,6 +243,14 @@
     elemResultInfo.innerText = '';
     if (isRookWord) {
       elemResultInfo.innerText = `♖「${text}」はルーク語です。♜`;
+    } else if (isBishopWord) {
+      elemResultInfo.innerText = `♗「${text}」はビショップ語です。♝`;
+    } else if (isKingWord) {
+      elemResultInfo.innerText = `♔「${text}」はキング語です。♚`;
+    } else if (isQueenWord) {
+      elemResultInfo.innerText = `♕「${text}」はクイーン語です。♛`;
+    } else if (isKnightWord) {
+      elemResultInfo.innerText = `♘「${text}」はナイト語です。♞`;
     } else {
       elemResultInfo.innerText = '　';
     }
