@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.24-b';
+  const version = 'Version: 2022.04.24-c';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -31,19 +31,22 @@
   let posOther;
   const classOther = 'other';
 
-  let elemSvg;
-  let elemText;
   let elemCheckboxKatakana;
   let elemCheckboxSmall;
   let elemCheckboxDakuten;
   let elemCheckboxChoonpu;
-  let elemResultInfo;
+  let elemCheckboxSamePos;
+
+  let elemText;
+  let elemSvg;
   let elemCharOther;
+  let elemResultInfo;
 
   let optionKatakana;
   let optionSmall;
   let optionDakuten;
   let optionChoonpu;
+  let optionSamePos;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -164,24 +167,26 @@
     optionSmall = elemCheckboxSmall.checked;
     optionDakuten = elemCheckboxDakuten.checked;
     optionChoonpu = elemCheckboxChoonpu.checked;
+    optionSamePos = elemCheckboxSamePos.checked;
   }
 
   function isRookMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return false;
+    if (isSamePos(pos1, pos2)) return optionSamePos;
     return pos1.x == pos2.x || pos1.y == pos2.y;
   }
   function isBishopMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return false;
+    if (isSamePos(pos1, pos2)) return optionSamePos;
     return Math.abs(pos1.x - pos2.x) == Math.abs(pos1.y - pos2.y);
   }
   function isKingMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return false;
+    if (isSamePos(pos1, pos2)) return optionSamePos;
     return Math.abs(pos1.x - pos2.x) <= blockSize && Math.abs(pos1.y - pos2.y) <= blockSize;
   }
   function isQueenMove(pos1, pos2) {
     return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
   }
   function isKnightMove(pos1, pos2) {
+    if (isSamePos(pos1, pos2)) return optionSamePos;
     const dx = Math.abs(pos1.x - pos2.x) / blockSize;
     const dy = Math.abs(pos1.y - pos2.y) / blockSize;
     return dx == 1 && dy == 2 || dx == 2 && dy == 1;
@@ -271,6 +276,8 @@
     elemCheckboxDakuten.addEventListener('change', updateResult, false);
     elemCheckboxChoonpu = document.getElementById('checkboxChoonpu');
     elemCheckboxChoonpu.addEventListener('change', updateResult, false);
+    elemCheckboxSamePos = document.getElementById('checkboxSamePos');
+    elemCheckboxSamePos.addEventListener('change', updateResult, false);
     document.addEventListener('keyup', updateResult, false);
     document.addEventListener('mouseup', updateResult, false);
 
