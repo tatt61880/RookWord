@@ -14,68 +14,78 @@
 
 <body>
 <div id="contents">
-  <h1>♖ ルーク語 ツール ♜</h1>
-  <div style="margin: 5px;">
-    <span id="versionInfo">　</span>
+  <div style="border: solid 3px pink;">
+    <h1>♖ ルーク語 ツール ♜</h1>
+    <div style="margin: 5px;">
+      <span id="versionInfo">　</span>
+    </div>
+
+    <div style="margin: 10px;">
+      入力: <input id="inputText" type="text" size="52" />
+    </div>
+    <svg id="svgMain" width="480" height="240"></svg>
+
+    <div>
+      <span id="resultInfo">　</span>
+    </div>
+    <div style="margin-bottom: 5px;">
+      <span id="distInfo">　</span>
+    </div>
   </div>
 
-  <div style="margin: 10px;">
-    入力: <input id="inputText" type="text" size="52" />
-  </div>
-  <svg id="svgMain" width="480" height="240"></svg>
-
-  <div>
-    <span id="resultInfo">　</span>
-  </div>
-  <div style="margin-bottom: 5px;">
-    <span id="distInfo">　</span>
-  </div>
-
-  <h2>設定</h2>
-  <div style="text-align: left; margin: 5px;">
-    <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する。</label><br>
-    <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">「ぁぃぅぇぉっゃゅょゎ」を大きい文字と同一視する。</label><br>
-    <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する。</label><br>
-    <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う。</label><br>
-    <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する。</label><br>
-    <input type="checkbox" id="checkboxIgnoreSpace" checked> <label for="checkboxIgnoreSpace">半角空白・全角空白を無視する。</label><br>
+  <div style="margin: 10px 0; border: solid 3px skyblue;">
+    <h2>設定</h2>
+    <div style="text-align: left; margin: 5px;">
+      <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する。</label><br>
+      <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">「ぁぃぅぇぉっゃゅょゎ」を大きい文字と同一視する。</label><br>
+      <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する。</label><br>
+      <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う。</label><br>
+      <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する。</label><br>
+      <input type="checkbox" id="checkboxIgnoreSpace" checked> <label for="checkboxIgnoreSpace">半角空白・全角空白を無視する。</label><br>
+    </div>
   </div>
 
-  <h2>これは何？</h2>
-  <div style="margin: 10px;">
-  ルーク語の判定などを行うツールです。
+  <div style="margin: 10px 0; border: solid 3px skyblue;">
+    <h2>これは何？</h2>
+    <div style="margin: 10px;">
+    ルーク語の判定などを行うツールです。
+    </div>
+
+    <div style="margin: 10px; border: solid 3px pink;">
+      <h1>ルーク語</h1>
+      <div style="margin: 5px;">
+        五十音表をチェスの盤面と見立て、<br>
+        ルークの駒が動いた時に成立する単語群。<br>
+        例: いあいぎり、かくう、ルークご、ツール<br>
+        命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a>
+      </div>
+    </div>
+
+    <div style="margin: 10px; padding: 5px; border: solid 3px skyblue;">
+      入力した文字を線で結びます。<br>
+      表に存在しない文字は <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
+    </div>
+
+    <div style="margin: 10px; padding: 5px; border: solid 3px skyblue;">
+      入力がルーク語であれば、その旨を表示します。<br>
+      ビショップ、キング、クイーン、ナイトも同様。<br>
+      複数当てはまる場合は、1つだけ表示します。<br>
+      【優先順位】<br>
+      ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト<br>
+    </div>
+
+    <div style="margin: 10px;">
+      不具合があるかもしれせん。<br>
+      自己責任でご利用ください。
+    </div>
   </div>
 
-  <div style="margin: 10px; padding: 5px; border: solid 1px black;">
-  【ルーク語】<br>
-  五十音表をチェスの盤面と見立て、<br>
-  ルークの駒が動いた時に成立する単語群。<br>
-  例: いあいぎり、かくう、ルークご、ツール<br>
-  命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a>
-  </div>
-
-  <div style="margin: 10px;">
-  入力した文字を線で結びます。<br>
-  表に存在しない文字は <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
-  </div>
-
-  <div style="margin: 10px;">
-  入力がルーク語であれば、その旨を表示します。<br>
-  ビショップ、キング、クイーン、ナイトも同様。<br>
-  複数当てはまる場合は、1つだけ表示します。<br>
-  【優先順位】<br>
-  ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト<br>
-  </div>
-
-  <div style="margin: 10px;">
-  不具合があるかもしれせん。<br>
-  自己責任でご利用ください。
-  </div>
-
-  <h2>このツールの作者</h2>
-  <div style="margin: 10px;">
-  <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
-  要望などあれば、上記アカウントへどうぞ。<br>
+  <div style="margin: 10px 0 0; border: solid 3px pink;">
+    <h1>このツールの作者</h1>
+    <div style="margin: 10px;">
+      <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
+      要望などあれば、上記アカウントへどうぞ。<br>
+    </div>
   </div>
 </div>
 </body>
