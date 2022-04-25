@@ -15,7 +15,9 @@
 <body>
 <div id="contents">
   <h1>♖ ルーク語 ツール ♜</h1>
-  <p id="versionInfo"><br></p>
+  <div style="margin: 5px;">
+    <span id="versionInfo">　</span>
+  </div>
 
   <div style="margin: 10px;">
     入力: <input id="inputText" type="text" size="52" />
@@ -32,7 +34,7 @@
   <h2>設定</h2>
   <div style="text-align: left; margin: 5px;">
     <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する。</label><br>
-    <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">小さい文字(ぁぃぅぇぉっゃゅょゎ)を大きい文字と同一視する。</label><br>
+    <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">「ぁぃぅぇぉっゃゅょゎ」を大きい文字と同一視する。</label><br>
     <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する。</label><br>
     <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う。</label><br>
     <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する。</label><br>
@@ -41,31 +43,40 @@
 
   <h2>これは何？</h2>
   <div style="margin: 10px;">
-  「ルーク語」の判定を支援するツールです。
+  ルーク語の判定などを行うツールです。
   </div>
-  <div style="margin: 10px; border: solid 1px black;">
+
+  <div style="margin: 10px; padding: 5px; border: solid 1px black;">
   【ルーク語】<br>
-  五十音表をチェスの盤面と見立てて、<br>
+  五十音表をチェスの盤面と見立て、<br>
   ルークの駒が動いた時に成立する単語群。<br>
-  例：「いあいぎり」「かくう」「ルークご」「ツール」<br>
-  <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">命名者 ダブリングさん(@saikoro2357)のツイート</a>
+  例: いあいぎり、かくう、ルークご、ツール<br>
+  命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a>
   </div>
+
   <div style="margin: 10px;">
   入力した文字を線で結びます。<br>
-  表に存在しない文字はすべて <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
+  表に存在しない文字は <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
   </div>
+
   <div style="margin: 10px;">
   入力がルーク語であれば、その旨を表示します。<br>
-  ビショップ、キング、クイーン、ナイトの判定も行います。<br>
-  複数当てはまる場合は1つだけ結果を表示します。<br>
-  優先順位: ルーク＞ビショップ＞キング＞クイーン＞ナイト<br>
+  ビショップ、キング、クイーン、ナイトも同様。<br>
+  複数当てはまる場合は、1つだけ表示します。<br>
+  【優先順位】<br>
+  ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト<br>
   </div>
+
   <div style="margin: 10px;">
-  不具合があるかもしれせん、自己責任でご利用ください。
+  不具合があるかもしれせん。<br>
+  自己責任でご利用ください。
   </div>
 
   <h2>このツールの作者</h2>
-  <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a>
+  <div style="margin: 10px;">
+  <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
+  要望などあれば、上記アカウントへどうぞ。<br>
+  </div>
 </div>
 </body>
 </html>
