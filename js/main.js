@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.24-d';
+  const version = 'Version: 2022.04.26';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -31,6 +31,9 @@
   let posOther;
   const classOther = 'other';
 
+  let textPrev;
+  let dists = [];
+
   let elemCheckboxKatakana;
   let elemCheckboxSmall;
   let elemCheckboxDakuten;
@@ -42,6 +45,7 @@
   let elemSvg;
   let elemCharOther;
   let elemResultInfo;
+  let elemDistInfo;
 
   let optionKatakana;
   let optionSmall;
@@ -199,15 +203,87 @@
     return char == ' ' || char == '　';
   }
 
+  function clearDist() {
+    dists = [];
+  }
+
+  const gcd = (x, y) => { return x % y ? gcd(y, x % y) : y; };
+
+  function addDistSub(i, val) {
+    if (dists[i] === undefined) {
+      dists[i] = val;
+    } else {
+      dists[i] += val;
+    }
+  }
+
+  function addDist(pos1, pos2) {
+    let dx = Math.abs(pos1.x - pos2.x) / blockSize;
+    let dy = Math.abs(pos1.y - pos2.y) / blockSize;
+
+    if (dx == 0) {
+      addDistSub(1, dy);
+    } else if (dy == 0) {
+      addDistSub(1, dx);
+    } else {
+      const div = gcd(dx, dy);
+      dx /= div;
+      dy /= div;
+      addDistSub(dx ** 2 + dy ** 2, div);
+    }
+  }
+
+  function getDistExpr() {
+    let res = '';
+    let flag = false;
+    let v = 0;
+    for (let i = 1; i < dists.length; ++i) {
+      const val = dists[i];
+      if (val === undefined) continue;
+      if (val == 0) continue;
+      let str = '';
+      v += val * i ** 0.5;
+      if (i == 1) {
+        str = val;
+      } else {
+        if (val != 1) {
+          str = val;
+        }
+        str += `√${i}`;
+        flag = true;
+      }
+      if (res != '') res += ' + ';
+      res += str;
+    }
+    if (res == '') res = '0';
+    if (flag) {
+      res += ' ≒ ' + Math.round(v * 1000) / 1000;
+    }
+    return res;
+  }
+
+  function updateResultIfChanged() {
+    const text = elemText.value;
+    if (text == textPrev) return;
+    textPrev = text;
+    updateResult();
+  }
+
   function updateResult() {
     updateOptions();
+    clearDist();
 
     const text = elemText.value;
-    let isRookWord = text.length != 0;
-    let isBishopWord = text.length != 0;
-    let isKingWord = text.length != 0;
-    let isQueenWord = text.length != 0;
-    let isKnightWord = text.length != 0;
+
+    let isRookWord = true;
+    let isBishopWord = true;
+    let isKingWord = true;
+    let isQueenWord = true;
+    let isKnightWord = true;
+
+    let hasValidChar = false;
+    let hasOtherChar = false;
+    let validCharCount = 0;
 
     const resultId = 'result';
 
@@ -223,8 +299,11 @@
     let isFirstChar = true;
     for (const char of text) {
       if (optionIgnoreSpace && isSpace(char)) continue;
+      hasValidChar = true;
+      validCharCount++;
       const pos = getCharPos(char);
       if (isSamePos(pos, posOther)) {
+        hasOtherChar = true;
         elemCharOther.style.display = 'block';
         isRookWord = false;
         isBishopWord = false;
@@ -244,6 +323,8 @@
         if (isQueenWord && !isQueenMove(pos, posPrev)) isQueenWord = false;
         if (isKnightWord && !isKnightMove(pos, posPrev)) isKnightWord = false;
 
+        if (!hasOtherChar) addDist(pos, posPrev);
+
         const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
         line.setAttribute('stroke', 'red');
         line.setAttribute('stroke-width', '1');
@@ -256,7 +337,9 @@
     elemSvg.appendChild(g);
 
     elemResultInfo.innerText = '';
-    if (isRookWord) {
+    if (!hasValidChar) {
+      elemResultInfo.innerText = '　';
+    } else if (isRookWord) {
       elemResultInfo.innerText = `♖「${text}」はルーク語です。♜`;
     } else if (isBishopWord) {
       elemResultInfo.innerText = `♗「${text}」はビショップ語です。♝`;
@@ -269,13 +352,23 @@
     } else {
       elemResultInfo.innerText = '　';
     }
+
+    if (hasOtherChar || !hasValidChar) {
+      elemDistInfo.innerText = '　';
+    } else {
+      elemDistInfo.innerText = `移動距離: ${getDistExpr()} マス (${validCharCount}文字)`;
+    }
   }
 
   function init() {
+    textPrev = '';
     document.getElementById('versionInfo').innerText = version;
 
     elemText = document.getElementById('inputText');
-    elemText.addEventListener('change', updateResult, false);
+    elemText.addEventListener('change', updateResultIfChanged, false);
+    document.addEventListener('keyup', updateResultIfChanged, false);
+    document.addEventListener('mouseup', updateResultIfChanged, false);
+
     elemSvg = document.getElementById('svgMain');
 
     elemCheckboxKatakana = document.getElementById('checkboxKatakana');
@@ -290,10 +383,9 @@
     elemCheckboxSamePos.addEventListener('change', updateResult, false);
     elemCheckboxIgnoreSpace = document.getElementById('checkboxIgnoreSpace');
     elemCheckboxIgnoreSpace.addEventListener('change', updateResult, false);
-    document.addEventListener('keyup', updateResult, false);
-    document.addEventListener('mouseup', updateResult, false);
 
     elemResultInfo = document.getElementById('resultInfo');
+    elemDistInfo = document.getElementById('distInfo');
 
     {
       const rect = createRect({x: 0, y: 0, width: 480, height: 240});

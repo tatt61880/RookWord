@@ -9,7 +9,7 @@
 
   <link rel="stylesheet" href="./style.css?2022.04.23">
 
-  <script src="./js/main.js?2022.04.24-d"></script>
+  <script src="./js/main.js?2022.04.26"></script>
 </head>
 
 <body>
@@ -18,14 +18,18 @@
   <p id="versionInfo"><br></p>
 
   <div style="margin: 10px;">
-    入力: <input id="inputText" type="text" size="54" />
+    入力: <input id="inputText" type="text" size="52" />
   </div>
   <svg id="svgMain" width="480" height="240"></svg>
 
-  <div style="margin: 10px;">
+  <div>
     <span id="resultInfo">　</span>
   </div>
+  <div style="margin-bottom: 5px;">
+    <span id="distInfo">　</span>
+  </div>
 
+  <h2>設定</h2>
   <div style="text-align: left; margin: 5px;">
     <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する。</label><br>
     <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">小さい文字(ぁぃぅぇぉっゃゅょゎ)を大きい文字と同一視する。</label><br>
@@ -36,24 +40,28 @@
   </div>
 
   <h2>これは何？</h2>
-  <div>
-  「ルーク語」を探すのを支援するツールです。
+  <div style="margin: 10px;">
+  「ルーク語」の判定を支援するツールです。
   </div>
-  <div style="border: solid 1px black; margin:5px">
+  <div style="margin: 10px; border: solid 1px black;">
   【ルーク語】<br>
   五十音表をチェスの盤面と見立てて、<br>
   ルークの駒が動いた時に成立する単語群。<br>
-  例：「いあいぎり」「かくう」「ルークご」<br>
+  例：「いあいぎり」「かくう」「ルークご」「ツール」<br>
   <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">命名者 ダブリングさん(@saikoro2357)のツイート</a>
   </div>
-  <div>
+  <div style="margin: 10px;">
   入力した文字を線で結びます。<br>
   表に存在しない文字はすべて <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
-  <br>
+  </div>
+  <div style="margin: 10px;">
+  入力がルーク語であれば、その旨を表示します。<br>
   ビショップ、キング、クイーン、ナイトの判定も行います。<br>
   複数当てはまる場合は1つだけ結果を表示します。<br>
-  優先順位は、<br>
-  ルーク＞ビショップ＞キング＞クイーン＞ナイトです。<br>
+  優先順位: ルーク＞ビショップ＞キング＞クイーン＞ナイト<br>
+  </div>
+  <div style="margin: 10px;">
+  不具合があるかもしれせん、自己責任でご利用ください。
   </div>
 
   <h2>このツールの作者</h2>
