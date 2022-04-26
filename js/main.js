@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.26-c';
+  const version = 'Version: 2022.04.27';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -8,7 +8,7 @@
 
   const blockSize = 40;
   const sizePoint = 3;
-  const sizeFirstPoint = 5;
+  const sizePointEdge = 7;
   const charOther = '他';
 
   const table = [
@@ -40,6 +40,7 @@
   let elemCheckboxChoonpu;
   let elemCheckboxSamePos;
   let elemCheckboxIgnoreSpace;
+  let elemCheckboxArc;
 
   let elemText;
   let elemSvg;
@@ -53,6 +54,7 @@
   let optionChoonpu;
   let optionSamePos;
   let optionIgnoreSpace;
+  let optionArc;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -71,13 +73,35 @@
     return circle;
   }
 
+  function createDiamond(param) {
+    const polygon = document.createElementNS(SVG_NS, 'polygon');
+    const cx = param.cx;
+    const cy = param.cy;
+    const size = param.size;
+    polygon.setAttribute('points', `${cx},${cy + size} ${cx + size},${cy} ${cx},${cy - size} ${cx - size},${cy}`);
+    return polygon;
+  }
+
+  function dist(pos1, pos2) {
+    return ((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2) ** 0.5;
+  }
+
   function createLine(param) {
-    const line = document.createElementNS(SVG_NS, 'line');
-    line.setAttribute('x1', param.x1);
-    line.setAttribute('y1', param.y1);
-    line.setAttribute('x2', param.x2);
-    line.setAttribute('y2', param.y2);
-    return line;
+    if (optionArc) {
+      const path = document.createElementNS(SVG_NS, 'path');
+      const rx = 3 * dist({x: param.x1, y: param.y1}, {x: param.x2, y: param.y2});
+      const ry = rx;
+      path.setAttribute('d', `M ${param.x1} ${param.y1} A ${rx} ${ry} 0 0 0 ${param.x2} ${param.y2}`);
+      path.setAttribute('fill', 'none');
+      return path;
+    } else {
+      const line = document.createElementNS(SVG_NS, 'line');
+      line.setAttribute('x1', param.x1);
+      line.setAttribute('y1', param.y1);
+      line.setAttribute('x2', param.x2);
+      line.setAttribute('y2', param.y2);
+      return line;
+    }
   }
 
   function createText(param) {
@@ -175,6 +199,7 @@
     optionChoonpu = elemCheckboxChoonpu.checked;
     optionSamePos = elemCheckboxSamePos.checked;
     optionIgnoreSpace = elemCheckboxIgnoreSpace.checked;
+    optionArc = elemCheckboxArc.checked;
   }
 
   function isRookMove(pos1, pos2) {
@@ -318,10 +343,18 @@
         isQueenWord = false;
         isKnightWord = false;
       }
-      const circle = createCircle({cx: pos.x, cy: pos.y, r: isFirstChar ? sizeFirstPoint : sizePoint});
-      circle.setAttribute('fill', 'red');
-      circle.setAttribute('stroke', 'none');
-      g.appendChild(circle);
+
+      if (isFirstChar) {
+        const polygon = createDiamond({cx: pos.x, cy: pos.y, size: sizePointEdge});
+        polygon.setAttribute('fill', 'red');
+        polygon.setAttribute('stroke', 'none');
+        g.appendChild(polygon);
+      } else {
+        const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
+        circle.setAttribute('fill', 'red');
+        circle.setAttribute('stroke', 'none');
+        g.appendChild(circle);
+      }
 
       if (!isFirstChar) {
         if (isRookWord && !isRookMove(pos, posPrev)) isRookWord = false;
@@ -341,21 +374,28 @@
       posPrev = pos;
       isFirstChar = false;
     }
+
+    if (hasValidChar) {
+      const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: sizePointEdge});
+      polygon.setAttribute('fill', 'red');
+      polygon.setAttribute('stroke', 'none');
+      g.appendChild(polygon);
+    }
     elemSvg.appendChild(g);
 
     elemResultInfo.innerText = '';
     if (!hasValidChar) {
       elemResultInfo.innerText = '　';
     } else if (isRookWord) {
-      elemResultInfo.innerText = `♖「${text}」はルーク語です♜`;
+      elemResultInfo.innerText = `♖｢${text}｣はルーク語です♜`;
     } else if (isBishopWord) {
-      elemResultInfo.innerText = `♗「${text}」はビショップ語です♝`;
+      elemResultInfo.innerText = `♗｢${text}｣はビショップ語です♝`;
     } else if (isKingWord) {
-      elemResultInfo.innerText = `♔「${text}」はキング語です♚`;
+      elemResultInfo.innerText = `♔｢${text}｣はキング語です♚`;
     } else if (isQueenWord) {
-      elemResultInfo.innerText = `♕「${text}」はクイーン語です♛`;
+      elemResultInfo.innerText = `♕｢${text}｣はクイーン語です♛`;
     } else if (isKnightWord) {
-      elemResultInfo.innerText = `♘「${text}」はナイト語です♞`;
+      elemResultInfo.innerText = `♘｢${text}｣はナイト語です♞`;
     } else {
       elemResultInfo.innerText = '　';
     }
@@ -392,6 +432,8 @@
     elemCheckboxSamePos.addEventListener('change', updateResult, false);
     elemCheckboxIgnoreSpace = document.getElementById('checkboxIgnoreSpace');
     elemCheckboxIgnoreSpace.addEventListener('change', updateResult, false);
+    elemCheckboxArc = document.getElementById('checkboxArc');
+    elemCheckboxArc.addEventListener('change', updateResult, false);
 
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
