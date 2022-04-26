@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.26-b';
+  const version = 'Version: 2022.04.26-c';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -232,7 +232,7 @@
       let num = dx ** 2 + dy ** 2;
       for (let i = 2; i * i <= num; ++i) {
         while (num % (i * i) == 0) {
-          num /= (i * i);
+          num /= i * i;
           div *= i;
         }
       }
@@ -347,21 +347,23 @@
     if (!hasValidChar) {
       elemResultInfo.innerText = '　';
     } else if (isRookWord) {
-      elemResultInfo.innerText = `♖「${text}」はルーク語です。♜`;
+      elemResultInfo.innerText = `♖「${text}」はルーク語です♜`;
     } else if (isBishopWord) {
-      elemResultInfo.innerText = `♗「${text}」はビショップ語です。♝`;
+      elemResultInfo.innerText = `♗「${text}」はビショップ語です♝`;
     } else if (isKingWord) {
-      elemResultInfo.innerText = `♔「${text}」はキング語です。♚`;
+      elemResultInfo.innerText = `♔「${text}」はキング語です♚`;
     } else if (isQueenWord) {
-      elemResultInfo.innerText = `♕「${text}」はクイーン語です。♛`;
+      elemResultInfo.innerText = `♕「${text}」はクイーン語です♛`;
     } else if (isKnightWord) {
-      elemResultInfo.innerText = `♘「${text}」はナイト語です。♞`;
+      elemResultInfo.innerText = `♘「${text}」はナイト語です♞`;
     } else {
       elemResultInfo.innerText = '　';
     }
 
-    if (hasOtherChar || !hasValidChar) {
+    if (!hasValidChar) {
       elemDistInfo.innerText = '　';
+    } else if (hasOtherChar) {
+      elemDistInfo.innerText = `文字数: ${validCharCount}文字`;
     } else {
       elemDistInfo.innerText = `移動距離: ${getDistExpr()} マス (${validCharCount}文字)`;
     }

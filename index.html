@@ -4,56 +4,58 @@
   <title>ルーク語</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=500,user-scalable=no">
-  <link rel="icon" type="image/x-icon" href="./images/apple-touch-icon.png">
+  <link rel="icon" type="image/x-icon" href="./images/favicon.png">
   <link rel="apple-touch-icon" sizes="152x152" href="./images/apple-touch-icon.png">
 
-  <link rel="stylesheet" href="./style.css?2022.04.23">
+  <link rel="stylesheet" href="./style.css?2022.04.26">
 
-  <script src="./js/main.js?2022.04.26-b"></script>
+  <script src="./js/main.js?2022.04.26-c"></script>
 </head>
 
 <body>
 <div id="contents">
-  <div style="border: solid 3px pink;">
+  <div class="pink">
     <h1>♖ ルーク語 ツール ♜</h1>
-    <div style="margin: 5px;">
+    <div class="inner">
       <span id="versionInfo">　</span>
     </div>
 
-    <div style="margin: 10px;">
-      入力: <input id="inputText" type="text" size="52" />
-    </div>
-    <svg id="svgMain" width="480" height="240"></svg>
-
     <div>
+      <div style="margin: 10px;">
+        入力: <input id="inputText" type="text" size="52" />
+      </div>
+      <svg id="svgMain" width="480" height="240"></svg>
+    </div>
+
+    <div class="inner">
       <span id="resultInfo">　</span>
     </div>
-    <div style="margin-bottom: 5px;">
+    <div class="inner">
       <span id="distInfo">　</span>
     </div>
   </div>
 
-  <div style="margin: 10px 0; border: solid 3px skyblue;">
+  <div class="skyblue outer">
     <h2>設定</h2>
     <div style="text-align: left; margin: 5px;">
-      <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する。</label><br>
-      <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">「ぁぃぅぇぉっゃゅょゎ」を大きい文字と同一視する。</label><br>
-      <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する。</label><br>
-      <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う。</label><br>
-      <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する。</label><br>
-      <input type="checkbox" id="checkboxIgnoreSpace" checked> <label for="checkboxIgnoreSpace">半角空白・全角空白を無視する。</label><br>
+      <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する</label><br>
+      <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">｢ぁぃぅぇぉっゃゅょゎ｣ を大きい文字と同一視する</label><br>
+      <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する</label><br>
+      <input type="checkbox" id="checkboxChoonpu" checked> <label for="checkboxChoonpu">伸ばし棒(ー)を直前の文字の母音として扱う</label><br>
+      <input type="checkbox" id="checkboxSamePos" checked> <label for="checkboxSamePos">直前と同じ位置を許容する</label><br>
+      <input type="checkbox" id="checkboxIgnoreSpace" checked> <label for="checkboxIgnoreSpace">半角空白・全角空白を無視する</label><br>
     </div>
   </div>
 
-  <div style="margin: 10px 0; border: solid 3px skyblue;">
+  <div class="skyblue outer">
     <h2>これは何？</h2>
-    <div style="margin: 5px;">
+    <div class="inner">
     ルーク語の判定などを行うツールです。
     </div>
 
-    <div style="margin: 5px; border: solid 3px pink;">
+    <div class="pink inner">
       <h1>ルーク語</h1>
-      <div style="margin: 5px;">
+      <div class="inner">
         五十音表をチェスの盤面と見立て、<br>
         ルークの駒が動いた時に成立する単語群。<br>
         例: いあいぎり、かくう、ルークご、ツール<br>
@@ -61,30 +63,44 @@
       </div>
     </div>
 
-    <div style="margin: 5px; padding: 5px; border: solid 3px skyblue;">
-      入力した文字を線で結びます。<br>
-      表に存在しない文字は <span style="background-color: #fdf; border: solid 1px black; font-weight: bold;">&nbsp;他&nbsp;</span> のマスとして扱います。<br>
+    <div class="skyblue inner">
+      <h2>機能1</h2>
+      <div class="inner">
+        入力した文字を線で結びます。<br>
+        表に存在しない文字は <span class="other">&nbsp;他&nbsp;</span> のマスとして扱います。
+      </div>
     </div>
 
-    <div style="margin: 5px; padding: 5px; border: solid 3px skyblue;">
-      入力がルーク語であれば、その旨を表示します。<br>
-      ビショップ、キング、クイーン、ナイトも同様。<br>
-      複数当てはまる場合は、1つだけ表示します。<br>
-      【優先順位】<br>
-      ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト<br>
+    <div class="skyblue inner">
+      <h2>機能2</h2>
+      <div class="inner">
+        入力がルーク語であれば、その旨を表示します。<br>
+        ビショップ、キング、クイーン、ナイトも同様。<br>
+        複数当てはまる場合は、1つだけ表示します。<br>
+        【優先順位】<br>
+        ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト
+      </div>
     </div>
 
-    <div style="margin: 5px;">
+    <div class="skyblue inner">
+      <h2>機能3</h2>
+      <div class="inner">
+        移動距離と文字数を表示します。<br>
+        <span class="other">&nbsp;他&nbsp;</span> のマスを含む場合は移動距離を表示しません。
+      </div>
+    </div>
+
+    <div class="inner">
       不具合があるかもしれせん。<br>
       自己責任でご利用ください。
     </div>
   </div>
 
-  <div style="margin: 10px 0 0; border: solid 3px pink;">
+  <div class="pink outer">
     <h1>このツールの作者</h1>
-    <div style="margin: 5px;">
+    <div class="inner">
       <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
-      要望などあれば、上記アカウントへどうぞ。<br>
+      要望などあれば、上記アカウントへどうぞ！<br>
     </div>
   </div>
 </div>

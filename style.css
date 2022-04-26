@@ -26,7 +26,27 @@ h2 {
 }
 
 svg {
-  margin: 0px;
-  padding: 0px;
   user-select: none;
+}
+
+span.other {
+  border: solid 1px black;
+  background-color: #fdf;
+  font-weight: bold;
+}
+
+div.pink {
+  border: solid 3px pink;
+}
+
+div.skyblue {
+  border: solid 3px skyblue;
+}
+
+div.outer {
+  margin: 10px 0;
+}
+
+div.inner {
+  margin: 5px;
 }
