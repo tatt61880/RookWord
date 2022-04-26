@@ -21,7 +21,7 @@
     </div>
 
     <div>
-      <div style="margin: 10px;">
+      <div class="inner">
         入力: <input id="inputText" type="text" size="52" />
       </div>
       <svg id="svgMain" width="480" height="240"></svg>
@@ -37,7 +37,7 @@
 
   <div class="skyblue outer">
     <h2>設定</h2>
-    <div style="text-align: left; margin: 5px;">
+    <div class="inner" style="text-align: left;">
       <input type="checkbox" id="checkboxKatakana" checked> <label for="checkboxKatakana">カタカナをひらがなと同一視する</label><br>
       <input type="checkbox" id="checkboxSmall" checked> <label for="checkboxSmall">｢ぁぃぅぇぉっゃゅょゎ｣ を大きい文字と同一視する</label><br>
       <input type="checkbox" id="checkboxDakuten" checked> <label for="checkboxDakuten">濁点・半濁点を無視する</label><br>
@@ -50,7 +50,7 @@
   <div class="skyblue outer">
     <h2>これは何？</h2>
     <div class="inner">
-    ルーク語の判定などを行うツールです。
+      ルーク語の判定などを行うツールです。<br>
     </div>
 
     <div class="pink inner">
@@ -59,7 +59,7 @@
         五十音表をチェスの盤面と見立て、<br>
         ルークの駒が動いた時に成立する単語群。<br>
         例: いあいぎり、かくう、ルークご、ツール<br>
-        命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a>
+        命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a><br>
       </div>
     </div>
 
@@ -67,7 +67,7 @@
       <h2>機能1</h2>
       <div class="inner">
         入力した文字を線で結びます。<br>
-        表に存在しない文字は <span class="other">&nbsp;他&nbsp;</span> のマスとして扱います。
+        表に存在しない文字は <span class="other">&nbsp;他&nbsp;</span> として扱います。<br>
       </div>
     </div>
 
@@ -77,8 +77,8 @@
         入力がルーク語であれば、その旨を表示します。<br>
         ビショップ、キング、クイーン、ナイトも同様。<br>
         複数当てはまる場合は、1つだけ表示します。<br>
-        【優先順位】<br>
-        ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト
+        【判定の優先順位】<br>
+        ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト<br>
       </div>
     </div>
 
@@ -86,13 +86,13 @@
       <h2>機能3</h2>
       <div class="inner">
         移動距離と文字数を表示します。<br>
-        <span class="other">&nbsp;他&nbsp;</span> のマスを含む場合は移動距離を表示しません。
+        <span class="other">&nbsp;他&nbsp;</span> を含む場合は移動距離を表示しません。<br>
       </div>
     </div>
 
     <div class="inner">
       不具合があるかもしれせん。<br>
-      自己責任でご利用ください。
+      自己責任でご利用ください。<br>
     </div>
   </div>
 
