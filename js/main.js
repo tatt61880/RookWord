@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27';
+  const version = 'Version: 2022.04.27-b';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -40,6 +40,7 @@
   let elemCheckboxChoonpu;
   let elemCheckboxSamePos;
   let elemCheckboxIgnoreSpace;
+  let elemCheckboxDiamond;
   let elemCheckboxArc;
 
   let elemText;
@@ -54,6 +55,7 @@
   let optionChoonpu;
   let optionSamePos;
   let optionIgnoreSpace;
+  let optionDiamond;
   let optionArc;
 
   function createRect(param) {
@@ -199,6 +201,7 @@
     optionChoonpu = elemCheckboxChoonpu.checked;
     optionSamePos = elemCheckboxSamePos.checked;
     optionIgnoreSpace = elemCheckboxIgnoreSpace.checked;
+    optionDiamond = elemCheckboxDiamond.checked;
     optionArc = elemCheckboxArc.checked;
   }
 
@@ -344,10 +347,10 @@
         isKnightWord = false;
       }
 
-      if (isFirstChar) {
+      if (optionDiamond && isFirstChar) {
         const polygon = createDiamond({cx: pos.x, cy: pos.y, size: sizePointEdge});
-        polygon.setAttribute('fill', 'red');
-        polygon.setAttribute('stroke', 'none');
+        polygon.setAttribute('fill', 'yellow');
+        polygon.setAttribute('stroke', 'red');
         g.appendChild(polygon);
       } else {
         const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
@@ -375,10 +378,10 @@
       isFirstChar = false;
     }
 
-    if (hasValidChar) {
+    if (optionDiamond && hasValidChar) {
       const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: sizePointEdge});
-      polygon.setAttribute('fill', 'red');
-      polygon.setAttribute('stroke', 'none');
+      polygon.setAttribute('fill', 'yellow');
+      polygon.setAttribute('stroke', 'red');
       g.appendChild(polygon);
     }
     elemSvg.appendChild(g);
@@ -432,6 +435,8 @@
     elemCheckboxSamePos.addEventListener('change', updateResult, false);
     elemCheckboxIgnoreSpace = document.getElementById('checkboxIgnoreSpace');
     elemCheckboxIgnoreSpace.addEventListener('change', updateResult, false);
+    elemCheckboxDiamond = document.getElementById('checkboxDiamond');
+    elemCheckboxDiamond.addEventListener('change', updateResult, false);
     elemCheckboxArc = document.getElementById('checkboxArc');
     elemCheckboxArc.addEventListener('change', updateResult, false);
 
