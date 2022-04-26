@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.26';
+  const version = 'Version: 2022.04.26-b';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -226,10 +226,17 @@
     } else if (dy == 0) {
       addDistSub(1, dx);
     } else {
-      const div = gcd(dx, dy);
+      let div = gcd(dx, dy);
       dx /= div;
       dy /= div;
-      addDistSub(dx ** 2 + dy ** 2, div);
+      let num = dx ** 2 + dy ** 2;
+      for (let i = 2; i * i <= num; ++i) {
+        while (num % (i * i) == 0) {
+          num /= (i * i);
+          div *= i;
+        }
+      }
+      addDistSub(num, div);
     }
   }
 
