@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27-c';
+  const version = 'Version: 2022.04.27-d';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -34,29 +34,26 @@
   let textPrev;
   let dists = [];
 
-  let elemCheckboxKatakana;
-  let elemCheckboxSmall;
-  let elemCheckboxDakuten;
-  let elemCheckboxChoonpu;
-  let elemCheckboxSamePos;
-  let elemCheckboxIgnoreSpace;
-  let elemCheckboxDiamond;
-  let elemCheckboxArc;
+  const options = {};
+  const optionsElemId = {
+    // 表示関連設定
+    diamond: 'checkboxDiamond',
+    arc: 'checkboxArc',
+
+    // 判定関連設定
+    katakana: 'checkboxKatakana',
+    small: 'checkboxSmall',
+    dakuten: 'checkboxDakuten',
+    choonpu: 'checkboxChoonpu',
+    samePos: 'checkboxSamePos',
+    ignoreSpace: 'checkboxIgnoreSpace',
+  };
 
   let elemText;
   let elemSvg;
   let elemCharOther;
   let elemResultInfo;
   let elemDistInfo;
-
-  let optionKatakana;
-  let optionSmall;
-  let optionDakuten;
-  let optionChoonpu;
-  let optionSamePos;
-  let optionIgnoreSpace;
-  let optionDiamond;
-  let optionArc;
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -89,7 +86,7 @@
   }
 
   function createLine(param) {
-    if (optionArc) {
+    if (options.arc) {
       const path = document.createElementNS(SVG_NS, 'path');
       const rx = 3 * dist({x: param.x1, y: param.y1}, {x: param.x2, y: param.y2});
       const ry = rx;
@@ -167,21 +164,21 @@
   }
 
   function getCharPos(char) {
-    if (optionKatakana) {
+    if (options.katakana) {
       char = katakanaToHiragana(char);
     }
 
-    if (optionSmall) {
+    if (options.small) {
       char = smallToNormal(char);
     }
 
-    if (optionDakuten) {
+    if (options.dakuten) {
       char = dakutenToNormal(char);
     }
 
     let pos = charPos[char];
 
-    if (optionChoonpu) {
+    if (options.choonpu) {
       if (char == 'ー') {
         pos = choonpuPos();
       }
@@ -193,35 +190,23 @@
     return pos;
   }
 
-  // オプション用の変数を更新
-  function updateOptions() {
-    optionKatakana = elemCheckboxKatakana.checked;
-    optionSmall = elemCheckboxSmall.checked;
-    optionDakuten = elemCheckboxDakuten.checked;
-    optionChoonpu = elemCheckboxChoonpu.checked;
-    optionSamePos = elemCheckboxSamePos.checked;
-    optionIgnoreSpace = elemCheckboxIgnoreSpace.checked;
-    optionDiamond = elemCheckboxDiamond.checked;
-    optionArc = elemCheckboxArc.checked;
-  }
-
   function isRookMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return optionSamePos;
+    if (isSamePos(pos1, pos2)) return options.samePos;
     return pos1.x == pos2.x || pos1.y == pos2.y;
   }
   function isBishopMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return optionSamePos;
+    if (isSamePos(pos1, pos2)) return options.samePos;
     return Math.abs(pos1.x - pos2.x) == Math.abs(pos1.y - pos2.y);
   }
   function isKingMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return optionSamePos;
+    if (isSamePos(pos1, pos2)) return options.samePos;
     return Math.abs(pos1.x - pos2.x) <= blockSize && Math.abs(pos1.y - pos2.y) <= blockSize;
   }
   function isQueenMove(pos1, pos2) {
     return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
   }
   function isKnightMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return optionSamePos;
+    if (isSamePos(pos1, pos2)) return options.samePos;
     const dx = Math.abs(pos1.x - pos2.x) / blockSize;
     const dy = Math.abs(pos1.y - pos2.y) / blockSize;
     return dx == 1 && dy == 2 || dx == 2 && dy == 1;
@@ -305,7 +290,6 @@
   }
 
   function updateResult() {
-    updateOptions();
     clearDist();
 
     const text = elemText.value;
@@ -333,7 +317,7 @@
     posPrev = posOther;
     let isFirstChar = true;
     for (const char of text) {
-      if (optionIgnoreSpace && isSpace(char)) continue;
+      if (options.ignoreSpace && isSpace(char)) continue;
       hasValidChar = true;
       validCharCount++;
       const pos = getCharPos(char);
@@ -347,7 +331,7 @@
         isKnightWord = false;
       }
 
-      if (optionDiamond && isFirstChar) {
+      if (options.diamond && isFirstChar) {
         const polygon = createDiamond({cx: pos.x, cy: pos.y, size: sizePointEdge});
         polygon.setAttribute('fill', 'yellow');
         polygon.setAttribute('stroke', 'red');
@@ -378,7 +362,7 @@
       isFirstChar = false;
     }
 
-    if (optionDiamond && hasValidChar) {
+    if (options.diamond && hasValidChar) {
       const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: sizePointEdge});
       polygon.setAttribute('fill', 'yellow');
       polygon.setAttribute('stroke', 'red');
@@ -423,22 +407,15 @@
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
 
-    elemCheckboxKatakana = document.getElementById('checkboxKatakana');
-    elemCheckboxKatakana.addEventListener('change', updateResult, false);
-    elemCheckboxSmall = document.getElementById('checkboxSmall');
-    elemCheckboxSmall.addEventListener('change', updateResult, false);
-    elemCheckboxDakuten = document.getElementById('checkboxDakuten');
-    elemCheckboxDakuten.addEventListener('change', updateResult, false);
-    elemCheckboxChoonpu = document.getElementById('checkboxChoonpu');
-    elemCheckboxChoonpu.addEventListener('change', updateResult, false);
-    elemCheckboxSamePos = document.getElementById('checkboxSamePos');
-    elemCheckboxSamePos.addEventListener('change', updateResult, false);
-    elemCheckboxIgnoreSpace = document.getElementById('checkboxIgnoreSpace');
-    elemCheckboxIgnoreSpace.addEventListener('change', updateResult, false);
-    elemCheckboxDiamond = document.getElementById('checkboxDiamond');
-    elemCheckboxDiamond.addEventListener('change', updateResult, false);
-    elemCheckboxArc = document.getElementById('checkboxArc');
-    elemCheckboxArc.addEventListener('change', updateResult, false);
+    for (const optionName in optionsElemId) {
+      const elemId = optionsElemId[optionName];
+      const elem = document.getElementById(elemId);
+      options[optionName] = elem.checked;
+      elem.addEventListener('change', function() {
+        options[optionName] = elem.checked;
+        updateResult();
+      }, false);
+    }
 
     {
       const rect = createRect({x: 0, y: 0, width: 480, height: 240});
