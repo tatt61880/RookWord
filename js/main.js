@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27-b';
+  const version = 'Version: 2022.04.27-c';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -400,7 +400,7 @@
     } else if (isKnightWord) {
       elemResultInfo.innerText = `♘｢${text}｣はナイト語です♞`;
     } else {
-      elemResultInfo.innerText = '　';
+      elemResultInfo.innerText = `入力 ｢${text}｣`;
     }
 
     if (!hasValidChar) {
@@ -417,9 +417,7 @@
     document.getElementById('versionInfo').innerText = version;
 
     elemText = document.getElementById('inputText');
-    elemText.addEventListener('change', updateResultIfChanged, false);
-    document.addEventListener('keyup', updateResultIfChanged, false);
-    document.addEventListener('mouseup', updateResultIfChanged, false);
+    elemText.addEventListener('input', updateResultIfChanged, false);
 
     elemSvg = document.getElementById('svgMain');
 
