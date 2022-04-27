@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27-d';
+  const version = 'Version: 2022.04.27-e';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -35,19 +35,19 @@
   let dists = [];
 
   const options = {};
-  const optionsElemId = {
+  const optionNames = [
     // 表示関連設定
-    diamond: 'checkboxDiamond',
-    arc: 'checkboxArc',
+    'diamond',
+    'arc',
 
     // 判定関連設定
-    katakana: 'checkboxKatakana',
-    small: 'checkboxSmall',
-    dakuten: 'checkboxDakuten',
-    choonpu: 'checkboxChoonpu',
-    samePos: 'checkboxSamePos',
-    ignoreSpace: 'checkboxIgnoreSpace',
-  };
+    'katakana',
+    'small',
+    'dakuten',
+    'choonpu',
+    'samePos',
+    'ignoreSpace',
+  ];
 
   let elemText;
   let elemSvg;
@@ -407,12 +407,11 @@
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
 
-    for (const optionName in optionsElemId) {
-      const elemId = optionsElemId[optionName];
-      const elem = document.getElementById(elemId);
-      options[optionName] = elem.checked;
-      elem.addEventListener('change', function() {
-        options[optionName] = elem.checked;
+    for (const optionName of optionNames) {
+      const elemOption = document.getElementById('options-' + optionName);
+      options[optionName] = elemOption.checked;
+      elemOption.addEventListener('change', function() {
+        options[optionName] = elemOption.checked;
         updateResult();
       }, false);
     }
