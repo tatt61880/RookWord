@@ -400,7 +400,7 @@
     } else if (isKnightWord) {
       elemResultInfo.innerText = `♘｢${text}｣はナイト語です♞`;
     } else {
-      elemResultInfo.innerText = `入力 ｢${text}｣`;
+      elemResultInfo.innerText = `｢${text}｣`;
     }
 
     if (!hasValidChar) {
@@ -420,6 +420,8 @@
     elemText.addEventListener('input', updateResultIfChanged, false);
 
     elemSvg = document.getElementById('svgMain');
+    elemResultInfo = document.getElementById('resultInfo');
+    elemDistInfo = document.getElementById('distInfo');
 
     elemCheckboxKatakana = document.getElementById('checkboxKatakana');
     elemCheckboxKatakana.addEventListener('change', updateResult, false);
@@ -437,9 +439,6 @@
     elemCheckboxDiamond.addEventListener('change', updateResult, false);
     elemCheckboxArc = document.getElementById('checkboxArc');
     elemCheckboxArc.addEventListener('change', updateResult, false);
-
-    elemResultInfo = document.getElementById('resultInfo');
-    elemDistInfo = document.getElementById('distInfo');
 
     {
       const rect = createRect({x: 0, y: 0, width: 480, height: 240});
