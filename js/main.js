@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27-e';
+  const version = 'Version: 2022.04.27-f';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -11,7 +11,7 @@
   const sizePointEdge = 7;
   const charOther = '他';
 
-  const table = [
+  const charTable = [
     'あいうえお',
     'かきくけこ',
     'さしすせそ',
@@ -34,20 +34,19 @@
   let textPrev;
   let dists = [];
 
-  const options = {};
-  const optionNames = [
+  const options = {
     // 表示関連設定
-    'diamond',
-    'arc',
+    diamond: undefined,
+    arc: undefined,
 
     // 判定関連設定
-    'katakana',
-    'small',
-    'dakuten',
-    'choonpu',
-    'samePos',
-    'ignoreSpace',
-  ];
+    katakana: undefined,
+    small: undefined,
+    dakuten: undefined,
+    choonpu: undefined,
+    samePos: undefined,
+    ignoreSpace: undefined,
+  };
 
   let elemText;
   let elemSvg;
@@ -407,7 +406,8 @@
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
 
-    for (const optionName of optionNames) {
+    // オプションの初期化
+    for (const optionName in options) {
       const elemOption = document.getElementById('options-' + optionName);
       options[optionName] = elemOption.checked;
       elemOption.addEventListener('change', function() {
@@ -416,16 +416,19 @@
       }, false);
     }
 
+    // 背景
     {
       const rect = createRect({x: 0, y: 0, width: 480, height: 240});
       rect.setAttribute('fill', '#eee');
       rect.setAttribute('stroke', 'none');
       elemSvg.appendChild(rect);
     }
-    for (let col = 0; col < table.length; ++col) {
+
+    // 五十音表
+    for (let col = 0; col < charTable.length; ++col) {
       for (let row = 0; row < 5; ++row) {
         const g = document.createElementNS(SVG_NS, 'g');
-        const char = table[col][row];
+        const char = charTable[col][row];
         if (char == '　') continue;
         const x = 420 - col * blockSize + (char == charOther ? blockSize * 0.5 : 0);
         const y = 20 + row * blockSize + (char == charOther ? -blockSize * 1.5 : 0);
