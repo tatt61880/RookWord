@@ -1,14 +1,14 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.27-f';
+  const version = 'Version: 2022.04.28';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   window.addEventListener('load', init, false);
 
   const blockSize = 40;
-  const sizePoint = 3;
-  const sizePointEdge = 7;
+  const sizePoint = 4;
+  const sizePointEdge = 8;
   const charOther = '他';
 
   const charTable = [
@@ -334,6 +334,7 @@
         const polygon = createDiamond({cx: pos.x, cy: pos.y, size: sizePointEdge});
         polygon.setAttribute('fill', 'yellow');
         polygon.setAttribute('stroke', 'red');
+        polygon.setAttribute('stroke-width', '2');
         g.appendChild(polygon);
       } else {
         const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
@@ -353,7 +354,7 @@
 
         const line = createLine({x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y});
         line.setAttribute('stroke', 'red');
-        line.setAttribute('stroke-width', '1');
+        line.setAttribute('stroke-width', '1.5');
         g.appendChild(line);
       }
 
@@ -365,6 +366,7 @@
       const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: sizePointEdge});
       polygon.setAttribute('fill', 'yellow');
       polygon.setAttribute('stroke', 'red');
+      polygon.setAttribute('stroke-width', '2');
       g.appendChild(polygon);
     }
     elemSvg.appendChild(g);
