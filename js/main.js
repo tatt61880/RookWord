@@ -454,7 +454,7 @@
         }
         g.appendChild(rect);
 
-        const text = createText({x: x + size.block / 2, y: y + size.block / 2 + 4, text: char});
+        const text = createText({x: x + size.block * 0.5, y: y + size.block * 0.6, text: char});
         text.setAttribute('font-size', `${size.block * 3 / 4}px`);
         text.setAttribute('font-weight', 'bold');
         text.setAttribute('dominant-baseline', 'middle');
