@@ -34,6 +34,8 @@ svg {
 }
 
 span.other {
+  margin: 5px;
+  padding: 0 5px;
   border: solid 1px black;
   background-color: #fdf;
   font-weight: bold;
