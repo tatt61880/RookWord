@@ -461,5 +461,7 @@
     }
 
     posOther = charPos[charOther];
+
+    updateResult();
   }
 })();
