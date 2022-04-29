@@ -4,7 +4,19 @@
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
-  window.addEventListener('load', init, false);
+  const options = {
+    // 表示関連設定
+    diamond: undefined,
+    arc: undefined,
+
+    // 判定関連設定
+    katakana: undefined,
+    small: undefined,
+    dakuten: undefined,
+    choonpu: undefined,
+    samePos: undefined,
+    ignoreSpace: undefined,
+  };
 
   const size = {
     block: 40,
@@ -36,25 +48,13 @@
   let textPrev;
   let dists = [];
 
-  const options = {
-    // 表示関連設定
-    diamond: undefined,
-    arc: undefined,
-
-    // 判定関連設定
-    katakana: undefined,
-    small: undefined,
-    dakuten: undefined,
-    choonpu: undefined,
-    samePos: undefined,
-    ignoreSpace: undefined,
-  };
-
   let elemText;
   let elemSvg;
   let elemCharOther;
   let elemResultInfo;
   let elemDistInfo;
+
+  window.addEventListener('load', init, false);
 
   function createRect(param) {
     const rect = document.createElementNS(SVG_NS, 'rect');
@@ -255,32 +255,28 @@
   }
 
   function getDistExpr() {
-    let res = '';
-    let flag = false;
-    let v = 0;
+    let distExpr = '';
+    let approximationFlag = false;
+    let distSum = 0;
     for (let i = 1; i < dists.length; ++i) {
       const val = dists[i];
       if (val === undefined) continue;
-      if (val == 0) continue;
       let str = '';
-      v += val * i ** 0.5;
+      distSum += val * i ** 0.5;
       if (i == 1) {
         str = val;
       } else {
-        if (val != 1) {
-          str = val;
-        }
-        str += `√${i}`;
-        flag = true;
+        str = (val == 1 ? '' : val) + `√${i}`;
+        approximationFlag = true;
       }
-      if (res != '') res += ' + ';
-      res += str;
+      if (distExpr != '') distExpr += ' + ';
+      distExpr += str;
     }
-    if (res == '') res = '0';
-    if (flag) {
-      res += ' ≒ ' + Math.round(v * 1000) / 1000;
+    if (distExpr == '') distExpr = '0';
+    if (approximationFlag) {
+      distExpr += ' ≒ ' + Math.round(distSum * 1000) / 1000;
     }
-    return res;
+    return distExpr;
   }
 
   function updateResultIfChanged() {
