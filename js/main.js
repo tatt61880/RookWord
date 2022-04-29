@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.28';
+  const version = 'Version: 2022.04.29';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -446,9 +446,12 @@
         }
         g.appendChild(rect);
 
-        const text = createText({x: x + 8, y: y + 30, text: char});
-        text.setAttribute('font-size', '24px');
+        const text = createText({x: x + blockSize / 2, y: y + blockSize / 2 + 4, text: char});
+        text.setAttribute('font-size', '30px');
         text.setAttribute('font-weight', 'bold');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('text-anchor', 'middle');
+
         if (char == charOther) {
           text.classList.add(classOther);
         }
