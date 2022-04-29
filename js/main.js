@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.29-c';
+  const version = 'Version: 2022.04.30';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
