@@ -235,10 +235,8 @@
     let dx = Math.abs(pos1.x - pos2.x) / size.block;
     let dy = Math.abs(pos1.y - pos2.y) / size.block;
 
-    if (dx == 0) {
-      addDistSub(1, dy);
-    } else if (dy == 0) {
-      addDistSub(1, dx);
+    if (dx * dy == 0) {
+      addDistSub(1, dx + dy);
     } else {
       let div = gcd(dx, dy);
       dx /= div;
