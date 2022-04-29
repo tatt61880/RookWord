@@ -1,16 +1,18 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.29';
+  const version = 'Version: 2022.04.29-b';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   window.addEventListener('load', init, false);
 
-  const blockSize = 40;
-  const sizePoint = 4;
-  const sizePointEdge = 8;
-  const charOther = '他';
+  const size = {
+    block: 40,
+    point: 4,
+    pointEdge: 8,
+  };
 
+  const charOther = '他';
   const charTable = [
     'あいうえお',
     'かきくけこ',
@@ -199,15 +201,15 @@
   }
   function isKingMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
-    return Math.abs(pos1.x - pos2.x) <= blockSize && Math.abs(pos1.y - pos2.y) <= blockSize;
+    return Math.abs(pos1.x - pos2.x) <= size.block && Math.abs(pos1.y - pos2.y) <= size.block;
   }
   function isQueenMove(pos1, pos2) {
     return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
   }
   function isKnightMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
-    const dx = Math.abs(pos1.x - pos2.x) / blockSize;
-    const dy = Math.abs(pos1.y - pos2.y) / blockSize;
+    const dx = Math.abs(pos1.x - pos2.x) / size.block;
+    const dy = Math.abs(pos1.y - pos2.y) / size.block;
     return dx == 1 && dy == 2 || dx == 2 && dy == 1;
   }
 
@@ -230,8 +232,8 @@
   }
 
   function addDist(pos1, pos2) {
-    let dx = Math.abs(pos1.x - pos2.x) / blockSize;
-    let dy = Math.abs(pos1.y - pos2.y) / blockSize;
+    let dx = Math.abs(pos1.x - pos2.x) / size.block;
+    let dy = Math.abs(pos1.y - pos2.y) / size.block;
 
     if (dx == 0) {
       addDistSub(1, dy);
@@ -331,13 +333,13 @@
       }
 
       if (options.diamond && isFirstChar) {
-        const polygon = createDiamond({cx: pos.x, cy: pos.y, size: sizePointEdge});
+        const polygon = createDiamond({cx: pos.x, cy: pos.y, size: size.pointEdge});
         polygon.setAttribute('fill', 'yellow');
         polygon.setAttribute('stroke', 'red');
         polygon.setAttribute('stroke-width', '2');
         g.appendChild(polygon);
       } else {
-        const circle = createCircle({cx: pos.x, cy: pos.y, r: sizePoint});
+        const circle = createCircle({cx: pos.x, cy: pos.y, r: size.point});
         circle.setAttribute('fill', 'red');
         circle.setAttribute('stroke', 'none');
         g.appendChild(circle);
@@ -363,7 +365,7 @@
     }
 
     if (options.diamond && hasValidChar) {
-      const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: sizePointEdge});
+      const polygon = createDiamond({cx: posPrev.x, cy: posPrev.y, size: size.pointEdge});
       polygon.setAttribute('fill', 'yellow');
       polygon.setAttribute('stroke', 'red');
       polygon.setAttribute('stroke-width', '2');
@@ -405,6 +407,8 @@
     elemText.addEventListener('input', updateResultIfChanged, false);
 
     elemSvg = document.getElementById('svgMain');
+    elemSvg.setAttribute('width', `${size.block * 12}`);
+    elemSvg.setAttribute('height', `${size.block * 6}`);
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
 
@@ -432,11 +436,11 @@
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
         if (char == '　') continue;
-        const x = 420 - col * blockSize + (char == charOther ? blockSize * 0.5 : 0);
-        const y = 20 + row * blockSize + (char == charOther ? -blockSize * 1.5 : 0);
-        charPos[char] = {x: x + blockSize / 2, y: y + blockSize / 2};
+        const x = size.block * 10.5 - col * size.block + (char == charOther ? size.block * 0.5 : 0);
+        const y = size.block * 0.5 + row * size.block + (char == charOther ? -size.block * 1.5 : 0);
+        charPos[char] = {x: x + size.block / 2, y: y + size.block / 2};
 
-        const rect = createRect({x: x, y: y, width: blockSize, height: blockSize});
+        const rect = createRect({x: x, y: y, width: size.block, height: size.block});
         rect.setAttribute('fill', 'white');
         rect.setAttribute('stroke', 'black');
         rect.setAttribute('stroke-width', '2');
@@ -446,8 +450,8 @@
         }
         g.appendChild(rect);
 
-        const text = createText({x: x + blockSize / 2, y: y + blockSize / 2 + 4, text: char});
-        text.setAttribute('font-size', '30px');
+        const text = createText({x: x + size.block / 2, y: y + size.block / 2 + 4, text: char});
+        text.setAttribute('font-size', `${size.block * 3 / 4}px`);
         text.setAttribute('font-weight', 'bold');
         text.setAttribute('dominant-baseline', 'middle');
         text.setAttribute('text-anchor', 'middle');
