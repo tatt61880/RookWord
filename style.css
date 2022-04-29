@@ -7,9 +7,9 @@ body {
 }
 
 #contents {
+  max-width: 500px;
   margin: auto;
   padding: 0px;
-  max-width: 500px;
   text-align: center;
 }
 
@@ -19,14 +19,14 @@ body {
 
 h1 {
   margin: 0px;
-  font-size: 18px;
   background-color: pink;
+  font-size: 18px;
 }
 
 h2 {
   margin: 0px;
-  font-size: 18px;
   background-color: skyblue;
+  font-size: 18px;
 }
 
 svg {
@@ -39,18 +39,16 @@ span.other {
   font-weight: bold;
 }
 
+div.inner {
+  margin: 5px;
+}
+
 div.pink {
+  margin-bottom: 5px;
   border: solid 3px pink;
 }
 
 div.skyblue {
+  margin-bottom: 5px;
   border: solid 3px skyblue;
-}
-
-div.outer {
-  margin: 10px 0;
-}
-
-div.inner {
-  margin: 5px;
 }
