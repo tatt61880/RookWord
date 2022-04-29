@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.04.29-b';
+  const version = 'Version: 2022.04.29-c';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -406,9 +406,13 @@
     elemText = document.getElementById('inputText');
     elemText.addEventListener('input', updateResultIfChanged, false);
 
+    const marginRatio = 0.5;
+    const svgWidth = size.block * (11 + 2 * marginRatio);
+    const svgHeight = size.block * (5 + 2 * marginRatio);
+
     elemSvg = document.getElementById('svgMain');
-    elemSvg.setAttribute('width', `${size.block * 12}`);
-    elemSvg.setAttribute('height', `${size.block * 6}`);
+    elemSvg.setAttribute('width', `${svgWidth}`);
+    elemSvg.setAttribute('height', `${svgHeight}`);
     elemResultInfo = document.getElementById('resultInfo');
     elemDistInfo = document.getElementById('distInfo');
 
@@ -424,7 +428,7 @@
 
     // 背景
     {
-      const rect = createRect({x: 0, y: 0, width: 480, height: 240});
+      const rect = createRect({x: 0, y: 0, width: svgWidth, height: svgHeight});
       rect.setAttribute('fill', '#eee');
       rect.setAttribute('stroke', 'none');
       elemSvg.appendChild(rect);
@@ -436,8 +440,8 @@
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
         if (char == '　') continue;
-        const x = size.block * 10.5 - col * size.block + (char == charOther ? size.block * 0.5 : 0);
-        const y = size.block * 0.5 + row * size.block + (char == charOther ? -size.block * 1.5 : 0);
+        const x = size.block * (10 + marginRatio) - col * size.block + (char == charOther ? size.block * 0.5 : 0);
+        const y = size.block * marginRatio + row * size.block + (char == charOther ? -size.block * 1.5 : 0);
         charPos[char] = {x: x + size.block / 2, y: y + size.block / 2};
 
         const rect = createRect({x: x, y: y, width: size.block, height: size.block});
