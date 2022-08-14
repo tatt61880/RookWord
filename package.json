@@ -1,6 +1,6 @@
 {
   "name": "RookWord",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "RookWord by tatt61880",
   "license": "MIT",
   "repository": {
@@ -13,10 +13,22 @@
   },
   "homepage": "https://github.com/tatt61880/RookWord#readme",
   "scripts": {
-    "lint": "eslint js\\*.js --fix"
+    "eslint": "eslint ./src/*.js --fix",
+    "htmlhint": "htmlhint ./*.html",
+    "stylelint": "stylelint ./css/*.css --fix"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.8.0"
+    "@babel/core": "^7.18.10",
+    "@babel/eslint-parser": "^7.18.9",
+    "eslint": "^8.21.0",
+    "htmlhint": "^1.1.4",
+    "stylelint": "^14.9.1",
+    "stylelint-config-standard": "^26.0.0"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "color-hex-length": "long"
+    }
   }
 }

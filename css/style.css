@@ -3,13 +3,13 @@ html {
 }
 
 body {
-  margin: 0px;
+  margin: 0;
 }
 
 #contents {
   max-width: 500px;
   margin: auto;
-  padding: 0px;
+  padding: 0;
   text-align: center;
 }
 
@@ -18,13 +18,13 @@ body {
 }
 
 h1 {
-  margin: 0px;
+  margin: 0;
   background-color: pink;
   font-size: 18px;
 }
 
 h2 {
-  margin: 0px;
+  margin: 0;
   background-color: skyblue;
   font-size: 18px;
 }
@@ -37,7 +37,7 @@ span.other {
   margin: 5px;
   padding: 0 5px;
   border: solid 1px black;
-  background-color: #fdf;
+  background-color: #ffddff;
   font-weight: bold;
 }
 
@@ -55,6 +55,6 @@ div.skyblue {
   border: solid 3px skyblue;
 }
 
-input[type=text] {
+input[type="text"] {
   font-size: 16px;
 }
