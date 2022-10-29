@@ -4,13 +4,21 @@ html {
 
 body {
   margin: 0;
+  background-color: #ccffff;
 }
 
 #contents {
   max-width: 500px;
-  margin: auto;
+  margin: 0 auto;
   padding: 0;
   text-align: center;
+  background-color: white;
+}
+
+#version-info {
+  color: gray;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .left {

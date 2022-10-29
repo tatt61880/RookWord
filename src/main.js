@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.08.14';
+  const version = 'Version: 2022.10.30';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -395,7 +395,7 @@
 
   function init() {
     textPrev = '';
-    document.getElementById('versionInfo').innerText = version;
+    document.getElementById('version-info').innerText = version;
 
     elemText = document.getElementById('inputText');
     elemText.addEventListener('input', updateResultIfChanged, false);
