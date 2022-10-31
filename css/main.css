@@ -9,16 +9,16 @@ body {
 
 #contents {
   max-width: 500px;
-  margin: 0 auto;
   padding: 0;
+  margin: 0 auto;
   text-align: center;
   background-color: white;
 }
 
 #version-info {
-  color: gray;
-  font-weight: bold;
   font-size: 0.9rem;
+  font-weight: bold;
+  color: gray;
 }
 
 .left {
@@ -27,14 +27,14 @@ body {
 
 h1 {
   margin: 0;
-  background-color: pink;
   font-size: 18px;
+  background-color: pink;
 }
 
 h2 {
   margin: 0;
-  background-color: skyblue;
   font-size: 18px;
+  background-color: skyblue;
 }
 
 svg {
@@ -42,11 +42,11 @@ svg {
 }
 
 span.other {
-  margin: 5px;
   padding: 0 5px;
-  border: solid 1px black;
-  background-color: #ffddff;
+  margin: 5px;
   font-weight: bold;
+  background-color: #ffddff;
+  border: solid 1px black;
 }
 
 div.inner {
