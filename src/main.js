@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  const version = 'Version: 2022.10.30';
+  const version = 'Version: 2022.11.12';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -423,7 +423,7 @@
     // 背景
     {
       const rect = createRect({x: 0, y: 0, width: svgWidth, height: svgHeight});
-      rect.setAttribute('fill', '#eee');
+      rect.setAttribute('fill', '#fff8f8');
       rect.setAttribute('stroke', 'none');
       elemSvg.appendChild(rect);
     }

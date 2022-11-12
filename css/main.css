@@ -12,7 +12,7 @@ body {
   padding: 0;
   margin: 0 auto;
   text-align: center;
-  background-color: white;
+  background-color: #ccffff;
 }
 
 #version-info {
@@ -55,12 +55,12 @@ div.inner {
 
 div.pink {
   margin-bottom: 5px;
-  border: solid 3px pink;
+  background-color: #ffe8e8;
 }
 
 div.skyblue {
   margin-bottom: 5px;
-  border: solid 3px skyblue;
+  background-color: #e8e8ff;
 }
 
 input[type="text"] {
