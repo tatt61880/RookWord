@@ -1,6 +1,6 @@
-(function() {
+(function () {
   'use strict';
-  const version = 'Version: 2022.11.12';
+  const version = 'Version: 2022.12.25';
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -122,7 +122,7 @@
 
   function smallToNormal(char) {
     for (const c of 'ぁぃぅぇぉっゃゅょゎ') {
-      if (char == c) {
+      if (char === c) {
         const code = char.charCodeAt(0);
         return String.fromCharCode(code + 1);
       }
@@ -132,39 +132,40 @@
 
   function dakutenToNormal(char) {
     for (const c of 'がぎぐげござじずぜぞだぢづでどばびぶべぼ') {
-      if (char == c) {
+      if (char === c) {
         const code = char.charCodeAt(0);
         return String.fromCharCode(code - 1);
       }
     }
     for (const c of 'ぱぴぷぺぽ') {
-      if (char == c) {
+      if (char === c) {
         const code = char.charCodeAt(0);
         return String.fromCharCode(code - 2);
       }
     }
-    if (char == 'ゔ') {
+    if (char === 'ゔ') {
       return 'う';
     }
     return char;
   }
 
   function isSamePos(pos1, pos2) {
-    return pos1.x == pos2.x && pos1.y == pos2.y;
+    return pos1.x === pos2.x && pos1.y === pos2.y;
   }
 
   function choonpuPos() {
     if (isSamePos(posPrev, charPos['ん'])) return charPos['ん']; // 「んー」の場合は「ん」のまま。
 
     for (const c of 'あいうえお') {
-      if (posPrev.y == charPos[c].y) {
+      if (posPrev.y === charPos[c].y) {
         return charPos[c];
       }
     }
     return posPrev;
   }
 
-  function getCharPos(char) {
+  function getCharPos(char_) {
+    let char = char_;
     if (options.katakana) {
       char = katakanaToHiragana(char);
     }
@@ -180,7 +181,7 @@
     let pos = charPos[char];
 
     if (options.choonpu) {
-      if (char == 'ー') {
+      if (char === 'ー') {
         pos = choonpuPos();
       }
     }
@@ -193,11 +194,11 @@
 
   function isRookMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
-    return pos1.x == pos2.x || pos1.y == pos2.y;
+    return pos1.x === pos2.x || pos1.y === pos2.y;
   }
   function isBishopMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
-    return Math.abs(pos1.x - pos2.x) == Math.abs(pos1.y - pos2.y);
+    return Math.abs(pos1.x - pos2.x) === Math.abs(pos1.y - pos2.y);
   }
   function isKingMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
@@ -210,18 +211,18 @@
     if (isSamePos(pos1, pos2)) return options.samePos;
     const dx = Math.abs(pos1.x - pos2.x) / size.block;
     const dy = Math.abs(pos1.y - pos2.y) / size.block;
-    return dx == 1 && dy == 2 || dx == 2 && dy == 1;
+    return dx === 1 && dy === 2 || dx === 2 && dy === 1;
   }
 
   function isSpace(char) {
-    return char == ' ' || char == '　';
+    return char === ' ' || char === '　';
   }
 
   function clearDist() {
     dists = [];
   }
 
-  const gcd = (x, y) => { return x % y ? gcd(y, x % y) : y; };
+  const gcd = (x, y) => x % y ? gcd(y, x % y) : y;
 
   function addDistSub(i, val) {
     if (dists[i] === undefined) {
@@ -235,7 +236,7 @@
     let dx = Math.abs(pos1.x - pos2.x) / size.block;
     let dy = Math.abs(pos1.y - pos2.y) / size.block;
 
-    if (dx * dy == 0) {
+    if (dx * dy === 0) {
       addDistSub(1, dx + dy);
     } else {
       let div = gcd(dx, dy);
@@ -243,7 +244,7 @@
       dy /= div;
       let num = dx ** 2 + dy ** 2;
       for (let i = 2; i * i <= num; ++i) {
-        while (num % (i * i) == 0) {
+        while (num % (i * i) === 0) {
           num /= i * i;
           div *= i;
         }
@@ -261,16 +262,16 @@
       if (val === undefined) continue;
       let str = '';
       distSum += val * i ** 0.5;
-      if (i == 1) {
+      if (i === 1) {
         str = val;
       } else {
-        str = (val == 1 ? '' : val) + `√${i}`;
+        str = (val === 1 ? '' : val) + `√${i}`;
         approximationFlag = true;
       }
-      if (distExpr != '') distExpr += ' + ';
+      if (distExpr !== '') distExpr += ' + ';
       distExpr += str;
     }
-    if (distExpr == '') distExpr = '0';
+    if (distExpr === '') distExpr = '0';
     if (approximationFlag) {
       distExpr += ' ≒ ' + Math.round(distSum * 1000) / 1000;
     }
@@ -279,7 +280,7 @@
 
   function updateResultIfChanged() {
     const text = elemText.value;
-    if (text == textPrev) return;
+    if (text === textPrev) return;
     textPrev = text;
     updateResult();
   }
@@ -414,7 +415,7 @@
     for (const optionName in options) {
       const elemOption = document.getElementById('options-' + optionName);
       options[optionName] = elemOption.checked;
-      elemOption.addEventListener('change', function() {
+      elemOption.addEventListener('change', function () {
         options[optionName] = elemOption.checked;
         updateResult();
       }, false);
@@ -433,16 +434,16 @@
       for (let row = 0; row < 5; ++row) {
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
-        if (char == '　') continue;
-        const x = size.block * (10 + marginRatio) - col * size.block + (char == charOther ? size.block * 0.5 : 0);
-        const y = size.block * marginRatio + row * size.block + (char == charOther ? -size.block * 1.5 : 0);
+        if (char === '　') continue;
+        const x = size.block * (10 + marginRatio) - col * size.block + (char === charOther ? size.block * 0.5 : 0);
+        const y = size.block * marginRatio + row * size.block + (char === charOther ? -size.block * 1.5 : 0);
         charPos[char] = {x: x + size.block / 2, y: y + size.block / 2};
 
-        const rect = createRect({x: x, y: y, width: size.block, height: size.block});
+        const rect = createRect({x, y, width: size.block, height: size.block});
         rect.setAttribute('fill', 'white');
         rect.setAttribute('stroke', 'black');
         rect.setAttribute('stroke-width', '2');
-        if (char == charOther) {
+        if (char === charOther) {
           rect.setAttribute('fill', '#fdf');
           elemCharOther = g;
         }
@@ -454,7 +455,7 @@
         text.setAttribute('dominant-baseline', 'middle');
         text.setAttribute('text-anchor', 'middle');
 
-        if (char == charOther) {
+        if (char === charOther) {
           text.classList.add(classOther);
         }
         g.appendChild(text);
