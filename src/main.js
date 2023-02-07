@@ -1,6 +1,9 @@
 (function () {
   'use strict';
-  const version = 'Version: 2022.12.25';
+  const version = 'Version: 2023.02.08';
+
+  const app = window.app;
+  Object.freeze(app);
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -397,6 +400,13 @@
   function init() {
     textPrev = '';
     document.getElementById('version-info').innerText = version;
+    const queryParams = app.getQueryParams();
+    const removedChars = new Set();
+    if (queryParams?.removed !== undefined) {
+      for (const char of queryParams.removed) {
+        removedChars.add(char);
+      }
+    }
 
     elemText = document.getElementById('inputText');
     elemText.addEventListener('input', updateResultIfChanged, false);
@@ -434,6 +444,7 @@
       for (let row = 0; row < 5; ++row) {
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
+        if (removedChars.has(char)) continue;
         if (char === '　') continue;
         const x = size.block * (10 + marginRatio) - col * size.block + (char === charOther ? size.block * 0.5 : 0);
         const y = size.block * marginRatio + row * size.block + (char === charOther ? -size.block * 1.5 : 0);
