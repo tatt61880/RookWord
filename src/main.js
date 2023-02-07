@@ -218,7 +218,7 @@
   }
 
   function isSpace(char) {
-    return char === ' ' || char === '　';
+    return char === ' ' || char === '　' || char === '\n';
   }
 
   function clearDist() {
