@@ -1,9 +1,11 @@
 (function () {
   'use strict';
-  const version = 'Version: 2023.02.08';
+  const version = 'Version: 2023.02.13';
 
   const app = window.app;
   Object.freeze(app);
+
+  let removedChars;
 
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -157,10 +159,18 @@
   }
 
   function choonpuPos() {
-    if (isSamePos(posPrev, charPos['ん'])) return charPos['ん']; // 「んー」の場合は「ん」のまま。
+    if (isSamePos(posPrev, charPos['ん'])) {
+      if (removedChars.has('ん')) {
+        return posOther;
+      }
+      return charPos['ん']; // 「んー」の場合は「ん」のまま。
+    }
 
     for (const c of 'あいうえお') {
       if (posPrev.y === charPos[c].y) {
+        if (removedChars.has(c)) {
+          return posOther;
+        }
         return charPos[c];
       }
     }
@@ -182,6 +192,9 @@
     }
 
     let pos = charPos[char];
+    if (removedChars.has(char)) {
+      pos = posOther;
+    }
 
     if (options.choonpu) {
       if (char === 'ー') {
@@ -401,7 +414,7 @@
     textPrev = '';
     document.getElementById('version-info').innerText = version;
     const queryParams = app.getQueryParams();
-    const removedChars = new Set();
+    removedChars = new Set();
     if (queryParams?.removed !== undefined) {
       for (const char of queryParams.removed) {
         removedChars.add(char);
@@ -444,11 +457,11 @@
       for (let row = 0; row < 5; ++row) {
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
-        if (removedChars.has(char)) continue;
         if (char === '　') continue;
         const x = size.block * (10 + marginRatio) - col * size.block + (char === charOther ? size.block * 0.5 : 0);
         const y = size.block * marginRatio + row * size.block + (char === charOther ? -size.block * 1.5 : 0);
         charPos[char] = { x: x + size.block / 2, y: y + size.block / 2 };
+        if (removedChars.has(char)) continue;
 
         const rect = createRect({ x, y, width: size.block, height: size.block });
         rect.setAttribute('fill', 'white');
