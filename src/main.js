@@ -1,6 +1,6 @@
 (function () {
   'use strict';
-  const version = 'Version: 2023.02.13';
+  const version = 'Version: 2023.09.17';
 
   const app = window.app;
   Object.freeze(app);
@@ -136,17 +136,11 @@
   }
 
   function dakutenToNormal(char) {
-    for (const c of 'がぎぐげござじずぜぞだぢづでどばびぶべぼ') {
-      if (char === c) {
-        const code = char.charCodeAt(0);
-        return String.fromCharCode(code - 1);
-      }
+    if ('がぎぐげござじずぜぞだぢづでどばびぶべぼ'.indexOf(char) !== -1) {
+      return String.fromCharCode(char.charCodeAt(0) - 1);
     }
-    for (const c of 'ぱぴぷぺぽ') {
-      if (char === c) {
-        const code = char.charCodeAt(0);
-        return String.fromCharCode(code - 2);
-      }
+    if ('ぱぴぷぺぽ'.indexOf(char) !== -1) {
+      return String.fromCharCode(char.charCodeAt(0) - 2);
     }
     if (char === 'ゔ') {
       return 'う';
