@@ -126,11 +126,8 @@
   }
 
   function smallToNormal(char) {
-    for (const c of 'ぁぃぅぇぉっゃゅょゎ') {
-      if (char === c) {
-        const code = char.charCodeAt(0);
-        return String.fromCharCode(code + 1);
-      }
+    if ('ぁぃぅぇぉっゃゅょゎ'.indexOf(char) !== -1) {
+      return String.fromCharCode(char.charCodeAt(0) + 1);
     }
     return char;
   }
