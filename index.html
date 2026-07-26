@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <title>ルーク語 ツール</title>
   <meta charset="UTF-8">
@@ -14,111 +15,117 @@
 </head>
 
 <body>
-<div id="contents">
-  <div class="pink">
-    <h1>♖ ルーク語 ツール ♜</h1>
-    <div class="inner">
-      <span id="version-info">　</span>
-    </div>
-
-    <div class="inner">
-      <textarea id="inputText" type="text" cols="60" rows="3"></textarea>
-    </div>
-
-    <div class="inner">
-      <div>
-        <svg id="svgMain" width="480" height="240"></svg>
+  <div id="contents">
+    <div class="pink">
+      <h1>♖ ルーク語 ツール ♜</h1>
+      <div class="inner">
+        <span id="version-info">　</span>
       </div>
 
       <div class="inner">
-        <span id="resultInfo">　</span>
+        <textarea id="inputText" type="text" cols="60" rows="3"></textarea>
       </div>
 
       <div class="inner">
-        <span id="distInfo">　</span>
+        <div>
+          <svg id="svgMain" width="480" height="240"></svg>
+        </div>
+
+        <div class="inner">
+          <span id="resultInfo">　</span>
+        </div>
+
+        <div class="inner">
+          <span id="distInfo">　</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pink">
+      <h1>表示関連設定</h1>
+      <div class="inner left">
+        <input type="checkbox" id="options-diamond" checked>
+        <label for="options-diamond">始点と終点を<img src="./images/diamond.png?2022.09.16" width="16" height="16"
+            alt="◇">にする</label><br>
+        <input type="checkbox" id="options-arc">
+        <label for="options-arc">線分の代わりに円弧で結ぶ</label><br>
+      </div>
+    </div>
+
+    <div class="pink">
+      <h1>判定関連設定</h1>
+      <div class="inner left">
+        <input type="checkbox" id="options-katakana" checked> <label for="options-katakana">カタカナをひらがなと同一視</label><br>
+        <input type="checkbox" id="options-small" checked> <label for="options-small">｢ぁぃぅぇぉっゃゅょゎ｣
+          を大きい文字と同一視</label><br>
+        <input type="checkbox" id="options-dakuten" checked> <label for="options-dakuten">濁点(ﾞ)・半濁点(ﾟ)を無視</label><br>
+        <input type="checkbox" id="options-choonpu" checked> <label
+          for="options-choonpu">伸ばし棒(ー)を直前の文字の母音として扱う</label><br>
+        <input type="checkbox" id="options-samePos" checked> <label for="options-samePos">直前と同じ位置を許容</label><br>
+        <input type="checkbox" id="options-ignoreSpace" checked> <label
+          for="options-ignoreSpace">半角空白・全角空白・改行を無視</label><br>
+      </div>
+    </div>
+
+    <div class="pink">
+      <h1>これは何？</h1>
+      <div class="inner">
+        ルーク語の判定などを行うツールです。<br>
+      </div>
+
+      <div class="inner skyblue">
+        <h2>♖ ルーク語 ♜</h2>
+        <div class="inner">
+          五十音表をチェスの盤面と見立て、<br>
+          ルークの駒が動いた時に成立する単語群。<br>
+          例: いあいぎり、かくう、ルークご、ツール<br>
+          命名者: <a
+            href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a><br>
+        </div>
+      </div>
+
+      <div class="inner skyblue">
+        <h2>♕ 機能1 ♛</h2>
+        <div class="inner">
+          入力した文字を線で結びます。<br>
+          表に存在しない文字は<span class="other">他</span>として扱います。<br>
+        </div>
+      </div>
+
+      <div class="inner skyblue">
+        <h2>♘ 機能2 ♞</h2>
+        <div class="inner">
+          入力がルーク語であれば、その旨を表示します。<br>
+          ビショップ、キング、クイーン、ナイトも同様。<br>
+          複数当てはまる場合は、1つだけ表示します。<br>
+          優先順位: ♖ &gt; ♗ &gt; ♔ &gt; ♕ &gt; ♘<br>
+          (ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト)<br>
+        </div>
+      </div>
+
+      <div class="inner skyblue">
+        <h2>♔ 機能3 ♚</h2>
+        <div class="inner">
+          移動距離と文字数を表示します。<br>
+          <span class="other">他</span>を含む場合は移動距離を表示しません。<br>
+        </div>
+      </div>
+
+      <div class="inner">
+        Chromeで動作確認しています。<br>
+        不具合があるかもしれせん。<br>
+        自己責任でご利用ください。<br>
+      </div>
+    </div>
+
+    <div class="pink">
+      <h1>このツールの作者</h1>
+      <div class="inner">
+        <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
+        要望などあれば、上記アカウントへどうぞ！<br>
       </div>
     </div>
   </div>
-
-  <div class="pink">
-    <h1>表示関連設定</h1>
-    <div class="inner left">
-      <input type="checkbox" id="options-diamond" checked>
-      <label for="options-diamond">始点と終点を<img src="./images/diamond.png?2022.09.16" width="16" height="16" alt="◇">にする</label><br>
-      <input type="checkbox" id="options-arc">
-      <label for="options-arc">線分の代わりに円弧で結ぶ</label><br>
-    </div>
-  </div>
-
-  <div class="pink">
-    <h1>判定関連設定</h1>
-    <div class="inner left">
-      <input type="checkbox" id="options-katakana" checked> <label for="options-katakana">カタカナをひらがなと同一視</label><br>
-      <input type="checkbox" id="options-small" checked> <label for="options-small">｢ぁぃぅぇぉっゃゅょゎ｣ を大きい文字と同一視</label><br>
-      <input type="checkbox" id="options-dakuten" checked> <label for="options-dakuten">濁点(ﾞ)・半濁点(ﾟ)を無視</label><br>
-      <input type="checkbox" id="options-choonpu" checked> <label for="options-choonpu">伸ばし棒(ー)を直前の文字の母音として扱う</label><br>
-      <input type="checkbox" id="options-samePos" checked> <label for="options-samePos">直前と同じ位置を許容</label><br>
-      <input type="checkbox" id="options-ignoreSpace" checked> <label for="options-ignoreSpace">半角空白・全角空白・改行を無視</label><br>
-    </div>
-  </div>
-
-  <div class="pink">
-    <h1>これは何？</h1>
-    <div class="inner">
-      ルーク語の判定などを行うツールです。<br>
-    </div>
-
-    <div class="inner skyblue">
-      <h2>♖ ルーク語 ♜</h2>
-      <div class="inner">
-        五十音表をチェスの盤面と見立て、<br>
-        ルークの駒が動いた時に成立する単語群。<br>
-        例: いあいぎり、かくう、ルークご、ツール<br>
-        命名者: <a href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a><br>
-      </div>
-    </div>
-
-    <div class="inner skyblue">
-      <h2>♕ 機能1 ♛</h2>
-      <div class="inner">
-        入力した文字を線で結びます。<br>
-        表に存在しない文字は<span class="other">他</span>として扱います。<br>
-      </div>
-    </div>
-
-    <div class="inner skyblue">
-      <h2>♘ 機能2 ♞</h2>
-      <div class="inner">
-        入力がルーク語であれば、その旨を表示します。<br>
-        ビショップ、キング、クイーン、ナイトも同様。<br>
-        複数当てはまる場合は、1つだけ表示します。<br>
-        優先順位: ♖ &gt; ♗ &gt; ♔ &gt; ♕ &gt; ♘<br>
-        (ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト)<br>
-      </div>
-    </div>
-
-    <div class="inner skyblue">
-      <h2>♔ 機能3 ♚</h2>
-      <div class="inner">
-        移動距離と文字数を表示します。<br>
-        <span class="other">他</span>を含む場合は移動距離を表示しません。<br>
-      </div>
-    </div>
-
-    <div class="inner">
-      Chromeで動作確認しています。<br>
-      不具合があるかもしれせん。<br>
-      自己責任でご利用ください。<br>
-    </div>
-  </div>
-
-  <div class="pink">
-    <h1>このツールの作者</h1>
-    <div class="inner">
-      <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
-      要望などあれば、上記アカウントへどうぞ！<br>
-    </div>
-  </div>
-</div>
 </body>
+
 </html>

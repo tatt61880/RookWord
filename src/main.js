@@ -83,7 +83,12 @@
     const cx = param.cx;
     const cy = param.cy;
     const size = param.size;
-    polygon.setAttribute('points', `${cx},${cy + size} ${cx + size},${cy} ${cx},${cy - size} ${cx - size},${cy}`);
+    polygon.setAttribute(
+      'points',
+      `${cx},${cy + size} ${cx + size},${cy} ${cx},${cy - size} ${
+        cx - size
+      },${cy}`
+    );
     return polygon;
   }
 
@@ -94,9 +99,13 @@
   function createLine(param) {
     if (options.arc) {
       const path = document.createElementNS(SVG_NS, 'path');
-      const rx = 3 * dist({ x: param.x1, y: param.y1 }, { x: param.x2, y: param.y2 });
+      const rx =
+        3 * dist({ x: param.x1, y: param.y1 }, { x: param.x2, y: param.y2 });
       const ry = rx;
-      path.setAttribute('d', `M ${param.x1} ${param.y1} A ${rx} ${ry} 0 0 0 ${param.x2} ${param.y2}`);
+      path.setAttribute(
+        'd',
+        `M ${param.x1} ${param.y1} A ${rx} ${ry} 0 0 0 ${param.x2} ${param.y2}`
+      );
       path.setAttribute('fill', 'none');
       return path;
     } else {
@@ -119,7 +128,7 @@
 
   function katakanaToHiragana(char) {
     const code = char.charCodeAt(0);
-    if (0x30A1 <= code && code <= 0x30FA) {
+    if (0x30a1 <= code && code <= 0x30fa) {
       return String.fromCharCode(code - 0x60);
     }
     return char;
@@ -209,7 +218,10 @@
   }
   function isKingMove(pos1, pos2) {
     if (isSamePos(pos1, pos2)) return options.samePos;
-    return Math.abs(pos1.x - pos2.x) <= size.block && Math.abs(pos1.y - pos2.y) <= size.block;
+    return (
+      Math.abs(pos1.x - pos2.x) <= size.block &&
+      Math.abs(pos1.y - pos2.y) <= size.block
+    );
   }
   function isQueenMove(pos1, pos2) {
     return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
@@ -218,7 +230,7 @@
     if (isSamePos(pos1, pos2)) return options.samePos;
     const dx = Math.abs(pos1.x - pos2.x) / size.block;
     const dy = Math.abs(pos1.y - pos2.y) / size.block;
-    return dx === 1 && dy === 2 || dx === 2 && dy === 1;
+    return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
   }
 
   function isSpace(char) {
@@ -229,7 +241,7 @@
     dists = [];
   }
 
-  const gcd = (x, y) => x % y ? gcd(y, x % y) : y;
+  const gcd = (x, y) => (x % y ? gcd(y, x % y) : y);
 
   function addDistSub(i, val) {
     if (dists[i] === undefined) {
@@ -267,14 +279,17 @@
     for (let i = 1; i < dists.length; ++i) {
       const val = dists[i];
       if (val === undefined) continue;
-      let str = '';
+
+      let str;
       distSum += val * i ** 0.5;
+
       if (i === 1) {
         str = val;
       } else {
         str = (val === 1 ? '' : val) + `√${i}`;
         approximationFlag = true;
       }
+
       if (distExpr !== '') distExpr += ' + ';
       distExpr += str;
     }
@@ -335,7 +350,11 @@
       }
 
       if (options.diamond && isFirstChar) {
-        const polygon = createDiamond({ cx: pos.x, cy: pos.y, size: size.pointEdge });
+        const polygon = createDiamond({
+          cx: pos.x,
+          cy: pos.y,
+          size: size.pointEdge,
+        });
         polygon.setAttribute('fill', 'yellow');
         polygon.setAttribute('stroke', 'red');
         polygon.setAttribute('stroke-width', '2');
@@ -356,7 +375,12 @@
 
         if (!hasOtherChar) addDist(pos, posPrev);
 
-        const line = createLine({ x1: posPrev.x, y1: posPrev.y, x2: pos.x, y2: pos.y });
+        const line = createLine({
+          x1: posPrev.x,
+          y1: posPrev.y,
+          x2: pos.x,
+          y2: pos.y,
+        });
         line.setAttribute('stroke', 'red');
         line.setAttribute('stroke-width', '1.5');
         g.appendChild(line);
@@ -367,7 +391,11 @@
     }
 
     if (options.diamond && hasValidChar) {
-      const polygon = createDiamond({ cx: posPrev.x, cy: posPrev.y, size: size.pointEdge });
+      const polygon = createDiamond({
+        cx: posPrev.x,
+        cy: posPrev.y,
+        size: size.pointEdge,
+      });
       polygon.setAttribute('fill', 'yellow');
       polygon.setAttribute('stroke', 'red');
       polygon.setAttribute('stroke-width', '2');
@@ -429,15 +457,24 @@
     for (const optionName in options) {
       const elemOption = document.getElementById('options-' + optionName);
       options[optionName] = elemOption.checked;
-      elemOption.addEventListener('change', function () {
-        options[optionName] = elemOption.checked;
-        updateResult();
-      }, false);
+      elemOption.addEventListener(
+        'change',
+        function () {
+          options[optionName] = elemOption.checked;
+          updateResult();
+        },
+        false
+      );
     }
 
     // 背景
     {
-      const rect = createRect({ x: 0, y: 0, width: svgWidth, height: svgHeight });
+      const rect = createRect({
+        x: 0,
+        y: 0,
+        width: svgWidth,
+        height: svgHeight,
+      });
       rect.setAttribute('fill', '#fff8f8');
       rect.setAttribute('stroke', 'none');
       elemSvg.appendChild(rect);
@@ -449,12 +486,23 @@
         const g = document.createElementNS(SVG_NS, 'g');
         const char = charTable[col][row];
         if (char === '　') continue;
-        const x = size.block * (10 + marginRatio) - col * size.block + (char === charOther ? size.block * 0.5 : 0);
-        const y = size.block * marginRatio + row * size.block + (char === charOther ? -size.block * 1.5 : 0);
+        const x =
+          size.block * (10 + marginRatio) -
+          col * size.block +
+          (char === charOther ? size.block * 0.5 : 0);
+        const y =
+          size.block * marginRatio +
+          row * size.block +
+          (char === charOther ? -size.block * 1.5 : 0);
         charPos[char] = { x: x + size.block / 2, y: y + size.block / 2 };
         if (removedChars.has(char)) continue;
 
-        const rect = createRect({ x, y, width: size.block, height: size.block });
+        const rect = createRect({
+          x,
+          y,
+          width: size.block,
+          height: size.block,
+        });
         rect.setAttribute('fill', 'white');
         rect.setAttribute('stroke', 'black');
         rect.setAttribute('stroke-width', '2');
@@ -464,8 +512,12 @@
         }
         g.appendChild(rect);
 
-        const text = createText({ x: x + size.block * 0.5, y: y + size.block * 0.6, text: char });
-        text.setAttribute('font-size', `${size.block * 3 / 4}px`);
+        const text = createText({
+          x: x + size.block * 0.5,
+          y: y + size.block * 0.6,
+          text: char,
+        });
+        text.setAttribute('font-size', `${(size.block * 3) / 4}px`);
         text.setAttribute('font-weight', 'bold');
         text.setAttribute('dominant-baseline', 'middle');
         text.setAttribute('text-anchor', 'middle');
