@@ -1,537 +1,357 @@
 (function () {
   'use strict';
-  const version = 'Version: 2023.09.17';
 
   const app = window.app;
-  Object.freeze(app);
-
-  let removedChars;
-
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  const options = { ...app.defaultOptions };
+  const input = document.getElementById('input-text');
+  const removedInput = document.getElementById('removed-text');
+  const svg = document.getElementById('svg-main');
+  const resultInfo = document.getElementById('result-info');
+  const distInfo = document.getElementById('dist-info');
+  const detailInfo = document.getElementById('detail-info');
+  const feedback = document.getElementById('feedback');
+  const shareField = document.getElementById('share-field');
+  const saveButton = document.getElementById('save-image');
+  const otherPosition = { x: 0.5, y: 2.5 };
+  let current;
+  let frame = null;
 
-  const options = {
-    // 表示関連設定
-    diamond: undefined,
-    arc: undefined,
-
-    // 判定関連設定
-    katakana: undefined,
-    small: undefined,
-    dakuten: undefined,
-    choonpu: undefined,
-    samePos: undefined,
-    ignoreSpace: undefined,
-  };
-
-  const size = {
-    block: 40,
-    point: 4,
-    pointEdge: 8,
-  };
-
-  const charOther = '他';
-  const charTable = [
-    'あいうえお',
-    'かきくけこ',
-    'さしすせそ',
-    'たちつてと',
-    'なにぬねの',
-    'はひふへほ',
-    'まみむめも',
-    'や　ゆ　よ',
-    'らりるれろ',
-    'わ　　　を',
-    'ん　　　' + charOther,
-  ];
-
-  const charPos = {};
-
-  let posPrev;
-  let posOther;
-  const classOther = 'other';
-
-  let textPrev;
-  let dists = [];
-
-  let elemText;
-  let elemSvg;
-  let elemCharOther;
-  let elemResultInfo;
-  let elemDistInfo;
-
-  window.addEventListener('load', init, false);
-
-  function createRect(param) {
-    const rect = document.createElementNS(SVG_NS, 'rect');
-    rect.setAttribute('x', param.x);
-    rect.setAttribute('y', param.y);
-    rect.setAttribute('width', param.width);
-    rect.setAttribute('height', param.height);
-    return rect;
+  function element(name, attributes = {}, text) {
+    const node = document.createElementNS(SVG_NS, name);
+    for (const [key, value] of Object.entries(attributes))
+      node.setAttribute(key, value);
+    if (text !== undefined) node.textContent = text;
+    return node;
   }
 
-  function createCircle(param) {
-    const circle = document.createElementNS(SVG_NS, 'circle');
-    circle.setAttribute('cx', param.cx);
-    circle.setAttribute('cy', param.cy);
-    circle.setAttribute('r', param.r);
-    return circle;
+  function coords(position) {
+    const point = position || otherPosition;
+    return { x: 40 + point.x * 40, y: 40 + point.y * 40 };
   }
 
-  function createDiamond(param) {
-    const polygon = document.createElementNS(SVG_NS, 'polygon');
-    const cx = param.cx;
-    const cy = param.cy;
-    const size = param.size;
-    polygon.setAttribute(
-      'points',
-      `${cx},${cy + size} ${cx + size},${cy} ${cx},${cy - size} ${
-        cx - size
-      },${cy}`
+  function drawBoard() {
+    svg.replaceChildren();
+    svg.appendChild(
+      element('title', { id: 'board-title' }, '五十音表と文字の移動経路')
     );
-    return polygon;
-  }
-
-  function dist(pos1, pos2) {
-    return ((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2) ** 0.5;
-  }
-
-  function createLine(param) {
-    if (options.arc) {
-      const path = document.createElementNS(SVG_NS, 'path');
-      const rx =
-        3 * dist({ x: param.x1, y: param.y1 }, { x: param.x2, y: param.y2 });
-      const ry = rx;
-      path.setAttribute(
-        'd',
-        `M ${param.x1} ${param.y1} A ${rx} ${ry} 0 0 0 ${param.x2} ${param.y2}`
-      );
-      path.setAttribute('fill', 'none');
-      return path;
-    } else {
-      const line = document.createElementNS(SVG_NS, 'line');
-      line.setAttribute('x1', param.x1);
-      line.setAttribute('y1', param.y1);
-      line.setAttribute('x2', param.x2);
-      line.setAttribute('y2', param.y2);
-      return line;
-    }
-  }
-
-  function createText(param) {
-    const text = document.createElementNS(SVG_NS, 'text');
-    text.setAttribute('x', param.x);
-    text.setAttribute('y', param.y);
-    text.textContent = param.text;
-    return text;
-  }
-
-  function katakanaToHiragana(char) {
-    const code = char.charCodeAt(0);
-    if (0x30a1 <= code && code <= 0x30fa) {
-      return String.fromCharCode(code - 0x60);
-    }
-    return char;
-  }
-
-  function smallToNormal(char) {
-    if ('ぁぃぅぇぉっゃゅょゎ'.indexOf(char) !== -1) {
-      return String.fromCharCode(char.charCodeAt(0) + 1);
-    }
-    return char;
-  }
-
-  function dakutenToNormal(char) {
-    if ('がぎぐげござじずぜぞだぢづでどばびぶべぼ'.indexOf(char) !== -1) {
-      return String.fromCharCode(char.charCodeAt(0) - 1);
-    }
-    if ('ぱぴぷぺぽ'.indexOf(char) !== -1) {
-      return String.fromCharCode(char.charCodeAt(0) - 2);
-    }
-    if (char === 'ゔ') {
-      return 'う';
-    }
-    return char;
-  }
-
-  function isSamePos(pos1, pos2) {
-    return pos1.x === pos2.x && pos1.y === pos2.y;
-  }
-
-  function choonpuPos() {
-    if (isSamePos(posPrev, charPos['ん'])) {
-      if (removedChars.has('ん')) {
-        return posOther;
-      }
-      return charPos['ん']; // 「んー」の場合は「ん」のまま。
-    }
-
-    for (const c of 'あいうえお') {
-      if (posPrev.y === charPos[c].y) {
-        if (removedChars.has(c)) {
-          return posOther;
-        }
-        return charPos[c];
-      }
-    }
-    return posPrev;
-  }
-
-  function getCharPos(char_) {
-    let char = char_;
-    if (options.katakana) {
-      char = katakanaToHiragana(char);
-    }
-
-    if (options.small) {
-      char = smallToNormal(char);
-    }
-
-    if (options.dakuten) {
-      char = dakutenToNormal(char);
-    }
-
-    let pos = charPos[char];
-    if (removedChars.has(char)) {
-      pos = posOther;
-    }
-
-    if (options.choonpu) {
-      if (char === 'ー') {
-        pos = choonpuPos();
-      }
-    }
-
-    if (pos === undefined) {
-      pos = posOther;
-    }
-    return pos;
-  }
-
-  function isRookMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return options.samePos;
-    return pos1.x === pos2.x || pos1.y === pos2.y;
-  }
-  function isBishopMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return options.samePos;
-    return Math.abs(pos1.x - pos2.x) === Math.abs(pos1.y - pos2.y);
-  }
-  function isKingMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return options.samePos;
-    return (
-      Math.abs(pos1.x - pos2.x) <= size.block &&
-      Math.abs(pos1.y - pos2.y) <= size.block
+    svg.appendChild(
+      element(
+        'desc',
+        { id: 'board-description' },
+        `${resultInfo.textContent}。${distInfo.textContent}`
+      )
     );
-  }
-  function isQueenMove(pos1, pos2) {
-    return isRookMove(pos1, pos2) || isBishopMove(pos1, pos2);
-  }
-  function isKnightMove(pos1, pos2) {
-    if (isSamePos(pos1, pos2)) return options.samePos;
-    const dx = Math.abs(pos1.x - pos2.x) / size.block;
-    const dy = Math.abs(pos1.y - pos2.y) / size.block;
-    return (dx === 1 && dy === 2) || (dx === 2 && dy === 1);
-  }
-
-  function isSpace(char) {
-    return char === ' ' || char === '　' || char === '\n';
-  }
-
-  function clearDist() {
-    dists = [];
-  }
-
-  const gcd = (x, y) => (x % y ? gcd(y, x % y) : y);
-
-  function addDistSub(i, val) {
-    if (dists[i] === undefined) {
-      dists[i] = val;
-    } else {
-      dists[i] += val;
-    }
-  }
-
-  function addDist(pos1, pos2) {
-    let dx = Math.abs(pos1.x - pos2.x) / size.block;
-    let dy = Math.abs(pos1.y - pos2.y) / size.block;
-
-    if (dx * dy === 0) {
-      addDistSub(1, dx + dy);
-    } else {
-      let div = gcd(dx, dy);
-      dx /= div;
-      dy /= div;
-      let num = dx ** 2 + dy ** 2;
-      for (let i = 2; i * i <= num; ++i) {
-        while (num % (i * i) === 0) {
-          num /= i * i;
-          div *= i;
-        }
-      }
-      addDistSub(num, div);
-    }
-  }
-
-  function getDistExpr() {
-    let distExpr = '';
-    let approximationFlag = false;
-    let distSum = 0;
-    for (let i = 1; i < dists.length; ++i) {
-      const val = dists[i];
-      if (val === undefined) continue;
-
-      let str;
-      distSum += val * i ** 0.5;
-
-      if (i === 1) {
-        str = val;
-      } else {
-        str = (val === 1 ? '' : val) + `√${i}`;
-        approximationFlag = true;
-      }
-
-      if (distExpr !== '') distExpr += ' + ';
-      distExpr += str;
-    }
-    if (distExpr === '') distExpr = '0';
-    if (approximationFlag) {
-      distExpr += ' ≒ ' + Math.round(distSum * 1000) / 1000;
-    }
-    return distExpr;
-  }
-
-  function updateResultIfChanged() {
-    const text = elemText.value;
-    if (text === textPrev) return;
-    textPrev = text;
-    updateResult();
-  }
-
-  function updateResult() {
-    clearDist();
-
-    const text = elemText.value;
-
-    let isRookWord = true;
-    let isBishopWord = true;
-    let isKingWord = true;
-    let isQueenWord = true;
-    let isKnightWord = true;
-
-    let hasValidChar = false;
-    let hasOtherChar = false;
-    let validCharCount = 0;
-
-    const resultId = 'result';
-
-    // 過去の結果を削除
-    const elemResult = document.getElementById(resultId);
-    if (elemResult !== null) elemResult.remove();
-
-    // 現在の結果を追加
-    const g = document.createElementNS(SVG_NS, 'g');
-    g.setAttribute('id', resultId);
-    elemCharOther.style.display = 'none';
-    posPrev = posOther;
-    let isFirstChar = true;
-    for (const char of text) {
-      if (options.ignoreSpace && isSpace(char)) continue;
-      hasValidChar = true;
-      validCharCount++;
-      const pos = getCharPos(char);
-      if (isSamePos(pos, posOther)) {
-        hasOtherChar = true;
-        elemCharOther.style.display = 'block';
-        isRookWord = false;
-        isBishopWord = false;
-        isKingWord = false;
-        isQueenWord = false;
-        isKnightWord = false;
-      }
-
-      if (options.diamond && isFirstChar) {
-        const polygon = createDiamond({
-          cx: pos.x,
-          cy: pos.y,
-          size: size.pointEdge,
-        });
-        polygon.setAttribute('fill', 'yellow');
-        polygon.setAttribute('stroke', 'red');
-        polygon.setAttribute('stroke-width', '2');
-        g.appendChild(polygon);
-      } else {
-        const circle = createCircle({ cx: pos.x, cy: pos.y, r: size.point });
-        circle.setAttribute('fill', 'red');
-        circle.setAttribute('stroke', 'none');
-        g.appendChild(circle);
-      }
-
-      if (!isFirstChar) {
-        if (isRookWord && !isRookMove(pos, posPrev)) isRookWord = false;
-        if (isBishopWord && !isBishopMove(pos, posPrev)) isBishopWord = false;
-        if (isKingWord && !isKingMove(pos, posPrev)) isKingWord = false;
-        if (isQueenWord && !isQueenMove(pos, posPrev)) isQueenWord = false;
-        if (isKnightWord && !isKnightMove(pos, posPrev)) isKnightWord = false;
-
-        if (!hasOtherChar) addDist(pos, posPrev);
-
-        const line = createLine({
-          x1: posPrev.x,
-          y1: posPrev.y,
-          x2: pos.x,
-          y2: pos.y,
-        });
-        line.setAttribute('stroke', 'red');
-        line.setAttribute('stroke-width', '1.5');
-        g.appendChild(line);
-      }
-
-      posPrev = pos;
-      isFirstChar = false;
-    }
-
-    if (options.diamond && hasValidChar) {
-      const polygon = createDiamond({
-        cx: posPrev.x,
-        cy: posPrev.y,
-        size: size.pointEdge,
+    svg.appendChild(
+      element('rect', { width: 480, height: 240, fill: '#fff8f8' })
+    );
+    app.charTable.forEach((column, col) => {
+      Array.from(column).forEach((char, row) => {
+        if (char === '　') return;
+        const isOther = char === '他';
+        if (isOther ? current.unknown.length === 0 : current.removed.has(char))
+          return;
+        const { x, y } = coords(isOther ? null : { x: 10 - col, y: row });
+        svg.appendChild(
+          element('rect', {
+            x: x - 20,
+            y: y - 20,
+            width: 40,
+            height: 40,
+            fill: isOther ? '#ffddff' : '#ffffff',
+            stroke: '#333333',
+            'stroke-width': 1.5,
+          })
+        );
+        svg.appendChild(
+          element(
+            'text',
+            {
+              x,
+              y: y + 2,
+              'font-family': 'sans-serif',
+              'font-size': 28,
+              'font-weight': 'bold',
+              'dominant-baseline': 'middle',
+              'text-anchor': 'middle',
+              fill: '#222222',
+            },
+            char
+          )
+        );
       });
-      polygon.setAttribute('fill', 'yellow');
-      polygon.setAttribute('stroke', 'red');
-      polygon.setAttribute('stroke-width', '2');
-      g.appendChild(polygon);
-    }
-    elemSvg.appendChild(g);
+    });
 
-    elemResultInfo.innerText = '';
-    if (!hasValidChar) {
-      elemResultInfo.innerText = '　';
-    } else if (isRookWord) {
-      elemResultInfo.innerText = `♖｢${text}｣はルーク語です♜`;
-    } else if (isBishopWord) {
-      elemResultInfo.innerText = `♗｢${text}｣はビショップ語です♝`;
-    } else if (isKingWord) {
-      elemResultInfo.innerText = `♔｢${text}｣はキング語です♚`;
-    } else if (isQueenWord) {
-      elemResultInfo.innerText = `♕｢${text}｣はクイーン語です♛`;
-    } else if (isKnightWord) {
-      elemResultInfo.innerText = `♘｢${text}｣はナイト語です♞`;
-    } else {
-      elemResultInfo.innerText = `｢${text}｣`;
-    }
-
-    if (!hasValidChar) {
-      elemDistInfo.innerText = '　';
-    } else if (hasOtherChar) {
-      elemDistInfo.innerText = `文字数: ${validCharCount}文字`;
-    } else {
-      elemDistInfo.innerText = `移動距離: ${getDistExpr()} マス (${validCharCount}文字)`;
+    const paths = element('g', {
+      fill: 'none',
+      stroke: '#d00032',
+      'stroke-width': 1.8,
+    });
+    const points = element('g', { fill: '#d00032' });
+    const seenEdges = new Set();
+    const seenPoints = new Set();
+    current.tokens.forEach((token, index) => {
+      const to = coords(token.position);
+      const pointKey = `${to.x},${to.y}`;
+      if (!seenPoints.has(pointKey)) {
+        seenPoints.add(pointKey);
+        points.appendChild(element('circle', { cx: to.x, cy: to.y, r: 4 }));
+      }
+      if (index === 0) return;
+      const from = coords(current.tokens[index - 1].position);
+      const edgeKey = `${from.x},${from.y}:${pointKey}`;
+      if (seenEdges.has(edgeKey) || (from.x === to.x && from.y === to.y))
+        return;
+      seenEdges.add(edgeKey);
+      if (options.arc) {
+        const radius = 3 * Math.hypot(to.x - from.x, to.y - from.y);
+        paths.appendChild(
+          element('path', {
+            d: `M ${from.x} ${from.y} A ${radius} ${radius} 0 0 0 ${to.x} ${to.y}`,
+          })
+        );
+      } else {
+        paths.appendChild(
+          element('line', { x1: from.x, y1: from.y, x2: to.x, y2: to.y })
+        );
+      }
+    });
+    svg.append(paths, points);
+    if (current.tokens.length > 0 && options.diamond) {
+      for (const [token, color] of [
+        [current.tokens[0], '#ffea70'],
+        [current.tokens.at(-1), '#ffb1c4'],
+      ]) {
+        const { x, y } = coords(token.position);
+        svg.appendChild(
+          element('polygon', {
+            points: `${x},${y - 8} ${x + 8},${y} ${x},${y + 8} ${x - 8},${y}`,
+            fill: color,
+            stroke: '#bd002c',
+            'stroke-width': 2,
+          })
+        );
+      }
     }
   }
 
-  function init() {
-    textPrev = '';
-    document.getElementById('version-info').innerText = version;
-    const queryParams = app.getQueryParams();
-    removedChars = new Set();
-    if (queryParams?.removed !== undefined) {
-      for (const char of queryParams.removed) {
-        removedChars.add(char);
-      }
+  function shortText(text, limit = 100) {
+    const chars = app.splitCharacters(text);
+    return chars.slice(0, limit).join('') + (chars.length > limit ? '…' : '');
+  }
+
+  function displayChar(char) {
+    return char
+      .replace(/\r\n|\n|\r/gu, '↵')
+      .replace(/\t/gu, '⇥')
+      .replace(/[ \u3000]/gu, '␣');
+  }
+
+  function update() {
+    frame = null;
+    shareField.hidden = true;
+    feedback.textContent = '';
+    current = app.analyze(input.value, options, removedInput.value);
+    const count = current.tokens.length;
+    const primary = current.matches[0];
+    resultInfo.dataset.kind = current.unknown.length
+      ? 'unknown'
+      : primary
+        ? primary.id
+        : 'none';
+    if (count === 0) {
+      resultInfo.textContent = '文字を入力すると判定します';
+    } else if (current.unknown.length) {
+      resultInfo.textContent = '表にない文字があるため、判定できません';
+    } else if (count === 1) {
+      resultInfo.textContent = '移動なし（1文字）';
+    } else {
+      resultInfo.textContent = primary
+        ? `${primary.symbol} ${primary.name}語です`
+        : '該当する駒はありません';
     }
-
-    elemText = document.getElementById('inputText');
-    elemText.addEventListener('input', updateResultIfChanged, false);
-
-    const marginRatio = 0.5;
-    const svgWidth = size.block * (11 + 2 * marginRatio);
-    const svgHeight = size.block * (5 + 2 * marginRatio);
-
-    elemSvg = document.getElementById('svgMain');
-    elemSvg.setAttribute('width', `${svgWidth}`);
-    elemSvg.setAttribute('height', `${svgHeight}`);
-    elemResultInfo = document.getElementById('resultInfo');
-    elemDistInfo = document.getElementById('distInfo');
-
-    // オプションの初期化
-    for (const optionName in options) {
-      const elemOption = document.getElementById('options-' + optionName);
-      options[optionName] = elemOption.checked;
-      elemOption.addEventListener(
-        'change',
-        function () {
-          options[optionName] = elemOption.checked;
-          updateResult();
-        },
-        false
+    distInfo.textContent =
+      count === 0
+        ? ''
+        : current.distance === null
+          ? `文字数: ${count}文字`
+          : `移動距離: ${current.distance} マス ／ ${count}文字`;
+    document.getElementById('normalized-text').textContent =
+      count === 0
+        ? '—'
+        : shortText(
+          current.tokens
+            .map((token) => (token.position ? token.normalized : '他'))
+            .join('')
+        );
+    const details = [];
+    if (current.unknown.length) {
+      const chars = [
+        ...new Set(current.unknown.map((token) => displayChar(token.source))),
+      ];
+      details.push(
+        `「他」として扱う文字: ${chars
+          .slice(0, 10)
+          .map((char) => `「${char}」`)
+          .join('、')}${chars.length > 10 ? ' ほか' : ''}`
       );
     }
-
-    // 背景
-    {
-      const rect = createRect({
-        x: 0,
-        y: 0,
-        width: svgWidth,
-        height: svgHeight,
-      });
-      rect.setAttribute('fill', '#fff8f8');
-      rect.setAttribute('stroke', 'none');
-      elemSvg.appendChild(rect);
+    if (current.firstRookFailure !== null) {
+      const i = current.firstRookFailure;
+      const from = current.tokens[i - 1];
+      const to = current.tokens[i];
+      const same = from.normalized === to.normalized;
+      details.push(
+        `ルークでは動けない箇所: ${i}→${i + 1}文字目「${displayChar(
+          from.source
+        )}→${displayChar(to.source)}」${
+          same ? '（同じ位置を許容しない設定）' : '（縦・横の両方が変わります）'
+        }`
+      );
     }
-
-    // 五十音表
-    for (let col = 0; col < charTable.length; ++col) {
-      for (let row = 0; row < 5; ++row) {
-        const g = document.createElementNS(SVG_NS, 'g');
-        const char = charTable[col][row];
-        if (char === '　') continue;
-        const x =
-          size.block * (10 + marginRatio) -
-          col * size.block +
-          (char === charOther ? size.block * 0.5 : 0);
-        const y =
-          size.block * marginRatio +
-          row * size.block +
-          (char === charOther ? -size.block * 1.5 : 0);
-        charPos[char] = { x: x + size.block / 2, y: y + size.block / 2 };
-        if (removedChars.has(char)) continue;
-
-        const rect = createRect({
-          x,
-          y,
-          width: size.block,
-          height: size.block,
-        });
-        rect.setAttribute('fill', 'white');
-        rect.setAttribute('stroke', 'black');
-        rect.setAttribute('stroke-width', '2');
-        if (char === charOther) {
-          rect.setAttribute('fill', '#fdf');
-          elemCharOther = g;
-        }
-        g.appendChild(rect);
-
-        const text = createText({
-          x: x + size.block * 0.5,
-          y: y + size.block * 0.6,
-          text: char,
-        });
-        text.setAttribute('font-size', `${(size.block * 3) / 4}px`);
-        text.setAttribute('font-weight', 'bold');
-        text.setAttribute('dominant-baseline', 'middle');
-        text.setAttribute('text-anchor', 'middle');
-
-        if (char === charOther) {
-          text.classList.add(classOther);
-        }
-        g.appendChild(text);
-        elemSvg.appendChild(g);
-      }
+    if (count > 1 && current.matches.length > 1) {
+      details.push(
+        `ほかに成立: ${current.matches
+          .slice(1)
+          .map((piece) => `${piece.symbol} ${piece.name}`)
+          .join('、')}`
+      );
     }
-
-    posOther = charPos[charOther];
-
-    updateResult();
+    detailInfo.textContent = details.join('\n');
+    document.getElementById('clear-text').disabled = input.value.length === 0;
+    saveButton.disabled = count === 0;
+    document.getElementById('endpoint-legend').hidden =
+      !options.diamond || count === 0;
+    drawBoard();
   }
+
+  function scheduleUpdate(event) {
+    if (event.isComposing) return;
+    if (frame !== null) cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(update);
+  }
+
+  function flushUpdate() {
+    if (frame !== null) cancelAnimationFrame(frame);
+    update();
+  }
+
+  async function copyUrl() {
+    flushUpdate();
+    const url = app.createShareUrl(
+      window.location.href,
+      input.value,
+      options,
+      removedInput.value
+    );
+    const field = document.getElementById('share-url');
+    field.value = url;
+    try {
+      await navigator.clipboard.writeText(url);
+      feedback.textContent = '共有URLをコピーしました。';
+    } catch {
+      shareField.hidden = false;
+      field.focus();
+      field.select();
+      feedback.textContent =
+        'コピーできない場合は、下のURLを選択してコピーしてください。';
+    }
+  }
+
+  async function saveImage() {
+    flushUpdate();
+    if (current.tokens.length === 0) return;
+    saveButton.disabled = true;
+    // Snapshot all labels before awaiting image loading.
+    const labels = [
+      shortText(input.value.replace(/\s+/gu, ' '), 24),
+      resultInfo.textContent,
+      distInfo.textContent,
+    ];
+    const imageUrl = URL.createObjectURL(
+      new Blob([new XMLSerializer().serializeToString(svg)], {
+        type: 'image/svg+xml;charset=utf-8',
+      })
+    );
+    try {
+      const image = new Image();
+      image.src = imageUrl;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = 1440;
+      canvas.height = 1110;
+      const context = canvas.getContext('2d');
+      context.scale(3, 3);
+      context.fillStyle = '#fff8f8';
+      context.fillRect(0, 0, 480, 370);
+      context.fillStyle = '#222222';
+      context.textAlign = 'center';
+      context.font = 'bold 20px sans-serif';
+      context.fillText(labels[0], 240, 30, 450);
+      context.drawImage(image, 0, 45, 480, 240);
+      context.font = 'bold 17px sans-serif';
+      context.fillText(labels[1], 240, 315, 450);
+      context.font = '14px sans-serif';
+      context.fillText(labels[2], 240, 341, 450);
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/png')
+      );
+      if (!blob) throw new Error('Image conversion failed');
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'rook-word.png';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      feedback.textContent = 'PNG画像を作成しました。';
+    } catch {
+      feedback.textContent =
+        '画像を保存できませんでした。もう一度お試しください。';
+    } finally {
+      URL.revokeObjectURL(imageUrl);
+      saveButton.disabled = current.tokens.length === 0;
+    }
+  }
+
+  const query = app.getQueryParams();
+  input.value = query.text || '';
+  removedInput.value = query.removed || '';
+  for (const name of Object.keys(options)) {
+    if (query[name] === '0' || query[name] === '1')
+      options[name] = query[name] === '1';
+    const checkbox = document.getElementById(`options-${name}`);
+    checkbox.checked = options[name];
+    checkbox.addEventListener('change', () => {
+      options[name] = checkbox.checked;
+      flushUpdate();
+    });
+  }
+  for (const field of [input, removedInput]) {
+    field.addEventListener('input', scheduleUpdate);
+    field.addEventListener('compositionend', scheduleUpdate);
+  }
+  document.querySelectorAll('[data-example]').forEach((button) => {
+    button.addEventListener('click', () => {
+      input.value = button.dataset.example;
+      flushUpdate();
+      input.focus();
+    });
+  });
+  document.getElementById('clear-text').addEventListener('click', () => {
+    input.value = '';
+    flushUpdate();
+    input.focus();
+  });
+  document.getElementById('reset-options').addEventListener('click', () => {
+    Object.assign(options, app.defaultOptions);
+    for (const name of Object.keys(options))
+      document.getElementById(`options-${name}`).checked = options[name];
+    removedInput.value = '';
+    flushUpdate();
+  });
+  document.getElementById('copy-url').addEventListener('click', copyUrl);
+  saveButton.addEventListener('click', saveImage);
+  flushUpdate();
 })();

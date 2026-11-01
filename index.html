@@ -1,131 +1,200 @@
 <!DOCTYPE html>
 <html lang="ja">
-
-<head>
-  <title>ルーク語 ツール</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=500, user-scalable=no">
-  <link rel="icon" type="image/x-icon" href="./images/favicon.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="./images/apple-touch-icon.png?2023.09.16">
-
-  <link rel="stylesheet" href="./css/main.css">
-
-  <script defer src="./src/analyze-url.js"></script>
-  <script defer src="./src/main.js"></script>
-</head>
-
-<body>
-  <div id="contents">
-    <div class="pink">
-      <h1>♖ ルーク語 ツール ♜</h1>
-      <div class="inner">
-        <span id="version-info">　</span>
-      </div>
-
-      <div class="inner">
-        <textarea id="inputText" type="text" cols="60" rows="3"></textarea>
-      </div>
-
-      <div class="inner">
-        <div>
-          <svg id="svgMain" width="480" height="240"></svg>
-        </div>
-
+  <head>
+    <meta charset="UTF-8" />
+    <title>ルーク語 ツール</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="五十音表をチェス盤に見立て、言葉がルークなどの駒の動きでつながるか判定します。移動経路の表示・画像保存・URL共有に対応。"
+    />
+    <link rel="icon" type="image/png" href="./images/favicon.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="152x152"
+      href="./images/apple-touch-icon.png?2023.09.16"
+    />
+    <link rel="stylesheet" href="./css/main.css" />
+    <script defer src="./src/analyze-url.js"></script>
+    <script defer src="./src/analyze.js"></script>
+    <script defer src="./src/main.js"></script>
+  </head>
+  <body>
+    <main id="contents">
+      <section class="pink" aria-labelledby="page-title">
+        <h1 id="page-title">♖ ルーク語 ツール ♜</h1>
+        <p id="version-info">v2026.11.01</p>
         <div class="inner">
-          <span id="resultInfo">　</span>
+          <label class="input-label" for="input-text">判定する言葉</label>
+          <textarea
+            id="input-text"
+            rows="3"
+            placeholder="例: いあいぎり"
+            spellcheck="false"
+            aria-describedby="input-help"
+          ></textarea>
+          <p id="input-help" class="hint">
+            言葉を入力すると、五十音表に移動経路を表示します。
+          </p>
+          <div class="examples" aria-label="入力例">
+            <span>例:</span>
+            <button type="button" data-example="いあいぎり">いあいぎり</button>
+            <button type="button" data-example="ルークご">ルークご</button>
+            <button type="button" data-example="ツール">ツール</button>
+            <button type="button" id="clear-text" disabled>クリア</button>
+          </div>
         </div>
-
+        <div class="inner result" aria-live="polite" aria-atomic="true">
+          <p id="result-info">文字を入力すると判定します</p>
+          <p id="dist-info"></p>
+          <p class="normalized">
+            判定に使う文字: <span id="normalized-text">—</span>
+          </p>
+          <p id="detail-info"></p>
+        </div>
         <div class="inner">
-          <span id="distInfo">　</span>
+          <svg
+            id="svg-main"
+            xmlns="http://www.w3.org/2000/svg"
+            width="480"
+            height="240"
+            viewBox="0 0 480 240"
+            role="img"
+            aria-labelledby="board-title board-description"
+          ></svg>
+          <p id="endpoint-legend" class="hint" hidden>
+            <span class="start-marker">◆</span> 始点　<span class="end-marker"
+              >◆</span
+            >
+            終点（同じ位置では終点を表示）
+          </p>
+          <div class="actions">
+            <button type="button" id="save-image" disabled>画像を保存</button>
+            <button type="button" id="copy-url">共有URLをコピー</button>
+          </div>
+          <p class="hint">共有URLには入力内容と設定が含まれます。</p>
+          <p id="feedback" role="status"></p>
+          <div id="share-field" hidden>
+            <label for="share-url">共有URL</label>
+            <input id="share-url" type="text" readonly spellcheck="false" />
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="pink">
-      <h1>表示関連設定</h1>
-      <div class="inner left">
-        <input type="checkbox" id="options-diamond" checked>
-        <label for="options-diamond">始点と終点を<img src="./images/diamond.png?2022.09.16" width="16" height="16"
-            alt="◇">にする</label><br>
-        <input type="checkbox" id="options-arc">
-        <label for="options-arc">線分の代わりに円弧で結ぶ</label><br>
-      </div>
-    </div>
-
-    <div class="pink">
-      <h1>判定関連設定</h1>
-      <div class="inner left">
-        <input type="checkbox" id="options-katakana" checked> <label for="options-katakana">カタカナをひらがなと同一視</label><br>
-        <input type="checkbox" id="options-small" checked> <label for="options-small">｢ぁぃぅぇぉっゃゅょゎ｣
-          を大きい文字と同一視</label><br>
-        <input type="checkbox" id="options-dakuten" checked> <label for="options-dakuten">濁点(ﾞ)・半濁点(ﾟ)を無視</label><br>
-        <input type="checkbox" id="options-choonpu" checked> <label
-          for="options-choonpu">伸ばし棒(ー)を直前の文字の母音として扱う</label><br>
-        <input type="checkbox" id="options-samePos" checked> <label for="options-samePos">直前と同じ位置を許容</label><br>
-        <input type="checkbox" id="options-ignoreSpace" checked> <label
-          for="options-ignoreSpace">半角空白・全角空白・改行を無視</label><br>
-      </div>
-    </div>
-
-    <div class="pink">
-      <h1>これは何？</h1>
-      <div class="inner">
-        ルーク語の判定などを行うツールです。<br>
-      </div>
-
-      <div class="inner skyblue">
-        <h2>♖ ルーク語 ♜</h2>
-        <div class="inner">
-          五十音表をチェスの盤面と見立て、<br>
-          ルークの駒が動いた時に成立する単語群。<br>
-          例: いあいぎり、かくう、ルークご、ツール<br>
-          命名者: <a
-            href="https://twitter.com/saikoro2357/status/1517641183841128448?s=20&t=_qtoJOR7Xl0jc2S7LhVB1Q">ダブリングさん(@saikoro2357)</a><br>
+      <section class="pink" aria-labelledby="display-title">
+        <h2 id="display-title">表示関連設定</h2>
+        <div class="inner left options">
+          <label
+            ><input type="checkbox" id="options-diamond" checked />
+            始点と終点を◇にする</label
+          >
+          <label
+            ><input type="checkbox" id="options-arc" />
+            線分の代わりに円弧で結ぶ</label
+          >
         </div>
-      </div>
+      </section>
 
-      <div class="inner skyblue">
-        <h2>♕ 機能1 ♛</h2>
-        <div class="inner">
-          入力した文字を線で結びます。<br>
-          表に存在しない文字は<span class="other">他</span>として扱います。<br>
+      <section class="pink" aria-labelledby="judge-title">
+        <h2 id="judge-title">判定関連設定</h2>
+        <div class="inner left options">
+          <label
+            ><input type="checkbox" id="options-katakana" checked />
+            カタカナをひらがなと同一視（半角も対応）</label
+          >
+          <label
+            ><input type="checkbox" id="options-small" checked />
+            小さい仮名を大きい文字と同一視</label
+          >
+          <label
+            ><input type="checkbox" id="options-dakuten" checked />
+            濁点・半濁点を無視</label
+          >
+          <label
+            ><input type="checkbox" id="options-choonpu" checked />
+            伸ばし棒（ー）を直前の文字の母音として扱う</label
+          >
+          <label
+            ><input type="checkbox" id="options-samePos" checked />
+            直前と同じ位置を許容</label
+          >
+          <label
+            ><input type="checkbox" id="options-ignoreSpace" checked />
+            空白・改行・タブを無視</label
+          >
+          <label class="input-label" for="removed-text"
+            >表から除外する文字（任意）</label
+          >
+          <input
+            id="removed-text"
+            type="text"
+            placeholder="例: んを"
+            spellcheck="false"
+            aria-describedby="removed-help"
+          />
+          <p id="removed-help" class="hint">
+            除外した文字は「他」として扱います。仮名の設定も反映されます。
+          </p>
+          <button type="button" id="reset-options">設定を初期値に戻す</button>
         </div>
-      </div>
+      </section>
 
-      <div class="inner skyblue">
-        <h2>♘ 機能2 ♞</h2>
-        <div class="inner">
-          入力がルーク語であれば、その旨を表示します。<br>
-          ビショップ、キング、クイーン、ナイトも同様。<br>
-          複数当てはまる場合は、1つだけ表示します。<br>
-          優先順位: ♖ &gt; ♗ &gt; ♔ &gt; ♕ &gt; ♘<br>
-          (ルーク&gt;ビショップ&gt;キング&gt;クイーン&gt;ナイト)<br>
+      <section class="pink" aria-labelledby="about-title">
+        <h2 id="about-title">これは何？</h2>
+        <div class="inner skyblue">
+          <h3>♖ ルーク語 ♜</h3>
+          <p>
+            五十音表をチェスの盤面と見立て、<br />ルークの駒が動いた時に成立する単語群。<br />例:
+            いあいぎり、かくう、ルークご、ツール
+          </p>
+          <p>
+            命名者:
+            <a href="https://twitter.com/saikoro2357/status/1517641183841128448"
+              >ダブリングさん（@saikoro2357）</a
+            >
+          </p>
         </div>
-      </div>
-
-      <div class="inner skyblue">
-        <h2>♔ 機能3 ♚</h2>
-        <div class="inner">
-          移動距離と文字数を表示します。<br>
-          <span class="other">他</span>を含む場合は移動距離を表示しません。<br>
+        <div class="inner left explanation">
+          <p>
+            入力した文字を線で結び、ルーク・ビショップ・キング・クイーン・ナイトの動きとして成立するか判定します。
+          </p>
+          <p>
+            複数成立する場合の優先順位は、♖ルーク → ♗ビショップ → ♔キング →
+            ♕クイーン → ♘ナイトです。ほかに成立する駒も結果に表示します。
+          </p>
+          <p>
+            表にない文字や除外した文字は「他」として表示し、駒の判定と移動距離の計算は行いません。1文字だけの場合は「移動なし」と表示します。
+          </p>
+          <details>
+            <summary>文字の扱いについて</summary>
+            <p>
+              小さい仮名は「ぁぃぅぇぉっゃゅょゎゕゖ」が対象です。「が」と「か＋結合濁点」のような表記の違いも同一視します。
+            </p>
+            <p>
+              伸ばし棒は、直前に表の文字があるときだけ母音に置き換えます。「んー」は「んん」として扱います。先頭や「他」の直後の伸ばし棒は「他」になります。
+            </p>
+            <p>
+              文字数は、結合文字や絵文字を可能な範囲でひとまとまりとして数えます。空白を無視する設定では、空白・改行・タブを文字数に含めません。
+            </p>
+          </details>
+          <p class="hint">入力内容の判定・描画はブラウザー内で行います。</p>
         </div>
-      </div>
-
-      <div class="inner">
-        Chromeで動作確認しています。<br>
-        不具合があるかもしれせん。<br>
-        自己責任でご利用ください。<br>
-      </div>
-    </div>
-
-    <div class="pink">
-      <h1>このツールの作者</h1>
-      <div class="inner">
-        <a href="https://twitter.com/tatt61880">Tatt(たっと) @tatt61880</a><br>
-        要望などあれば、上記アカウントへどうぞ！<br>
-      </div>
-    </div>
-  </div>
-</body>
-
+      </section>
+      <footer class="pink">
+        <h2>このツールの作者</h2>
+        <p>
+          <a href="https://twitter.com/tatt61880">Tatt（たっと）@tatt61880</a>
+        </p>
+        <p>
+          <a href="https://github.com/tatt61880/RookWord">ソースコード</a> ／
+          <a href="https://github.com/tatt61880/RookWord/issues"
+            >不具合・要望</a
+          >
+        </p>
+      </footer>
+      <noscript
+        ><p>このツールを使うにはJavaScriptを有効にしてください。</p></noscript
+      >
+    </main>
+  </body>
 </html>

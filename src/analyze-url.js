@@ -1,27 +1,26 @@
 (function () {
   'use strict';
-  const isBrowser = typeof window !== 'undefined';
 
-  function getQueryParams() {
-    if (document.location.search === '') return null;
+  function getQueryParams(search = window.location.search) {
+    // Decode each value once, accepting malformed escapes without crashing.
+    return Object.fromEntries(new URLSearchParams(search));
+  }
 
-    const query = document.location.search.substring(1);
-    const parameters = query.split('&');
-    const result = new Object();
-
-    for (let i = 0; i < parameters.length; i++) {
-      const element = parameters[i].split('=');
-      const paramName = decodeURIComponent(element[0]);
-      const paramValue = decodeURIComponent(element[1]);
-
-      result[paramName] = decodeURIComponent(paramValue);
+  function createShareUrl(base, text, options, removed) {
+    const url = new URL(base);
+    url.search = '';
+    url.hash = '';
+    url.searchParams.set('text', text);
+    for (const [name, value] of Object.entries(options)) {
+      url.searchParams.set(name, value ? '1' : '0');
     }
-
-    return result;
+    if (removed) url.searchParams.set('removed', removed);
+    return url.href;
   }
 
-  if (isBrowser) {
-    window.app = window.app || {};
-    window.app.getQueryParams = getQueryParams;
+  const api = { getQueryParams, createShareUrl };
+  if (typeof window !== 'undefined') {
+    window.app = Object.assign(window.app || {}, api);
   }
+  if (typeof module !== 'undefined') module.exports = api;
 })();
