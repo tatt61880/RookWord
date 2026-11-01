@@ -43,7 +43,7 @@
       )
     );
     svg.appendChild(
-      element('rect', { width: 480, height: 240, fill: '#fff8f8' })
+      element('rect', { width: 480, height: 240, fill: '#f8faff' })
     );
     app.charTable.forEach((column, col) => {
       Array.from(column).forEach((char, row) => {
@@ -58,7 +58,7 @@
             y: y - 20,
             width: 40,
             height: 40,
-            fill: isOther ? '#ffddff' : '#ffffff',
+            fill: isOther ? '#e0e9ff' : '#ffffff',
             stroke: '#333333',
             'stroke-width': 1.5,
           })
@@ -120,14 +120,14 @@
     if (current.tokens.length > 0 && options.diamond) {
       for (const [token, color] of [
         [current.tokens[0], '#ffea70'],
-        [current.tokens.at(-1), '#ffb1c4'],
+        [current.tokens.at(-1), '#b8d1ff'],
       ]) {
         const { x, y } = coords(token.position);
         svg.appendChild(
           element('polygon', {
             points: `${x},${y - 8} ${x + 8},${y} ${x},${y + 8} ${x - 8},${y}`,
             fill: color,
-            stroke: '#bd002c',
+            stroke: '#2857aa',
             'stroke-width': 2,
           })
         );
@@ -282,7 +282,7 @@
       canvas.height = 1110;
       const context = canvas.getContext('2d');
       context.scale(3, 3);
-      context.fillStyle = '#fff8f8';
+      context.fillStyle = '#f8faff';
       context.fillRect(0, 0, 480, 370);
       context.fillStyle = '#222222';
       context.textAlign = 'center';
