@@ -154,36 +154,42 @@
     current = app.analyze(input.value, options, removedInput.value);
     const count = current.tokens.length;
     const primary = current.matches[0];
-    resultInfo.dataset.kind = current.unknown.length
-      ? 'unknown'
-      : primary
-        ? primary.id
-        : 'none';
+    if (current.unknown.length > 0) {
+      resultInfo.dataset.kind = 'unknown';
+    } else if (primary) {
+      resultInfo.dataset.kind = primary.id;
+    } else {
+      resultInfo.dataset.kind = 'none';
+    }
     if (count === 0) {
       resultInfo.textContent = '文字を入力すると判定します';
     } else if (current.unknown.length) {
       resultInfo.textContent = '表にない文字があるため、判定できません';
     } else if (count === 1) {
       resultInfo.textContent = '移動なし（1文字）';
+    } else if (primary) {
+      resultInfo.textContent = `${primary.symbol} ${primary.name}語です`;
     } else {
-      resultInfo.textContent = primary
-        ? `${primary.symbol} ${primary.name}語です`
-        : '該当する駒はありません';
+      resultInfo.textContent = '該当する駒はありません';
     }
-    distInfo.textContent =
-      count === 0
-        ? ''
-        : current.distance === null
-          ? `文字数: ${count}文字`
-          : `移動距離: ${current.distance} マス ／ ${count}文字`;
-    document.getElementById('normalized-text').textContent =
-      count === 0
-        ? '—'
-        : shortText(
-          current.tokens
-            .map((token) => (token.position ? token.normalized : '他'))
-            .join('')
-        );
+
+    if (count === 0) {
+      distInfo.textContent = '';
+    } else if (current.distance === null) {
+      distInfo.textContent = `文字数: ${count}文字`;
+    } else {
+      distInfo.textContent = `移動距離: ${current.distance} マス ／ ${count}文字`;
+    }
+
+    const normalizedText = document.getElementById('normalized-text');
+    if (count === 0) {
+      normalizedText.textContent = '—';
+    } else {
+      const characters = current.tokens
+        .map((token) => (token.position ? token.normalized : '他'))
+        .join('');
+      normalizedText.textContent = shortText(characters);
+    }
     const details = [];
     if (current.unknown.length) {
       const chars = [

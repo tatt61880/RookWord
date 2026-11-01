@@ -116,7 +116,6 @@ button {
   border-radius: 5px;
 }
 
-
 button:disabled {
   cursor: default;
   opacity: 0.5;
@@ -200,7 +199,6 @@ a:focus-visible {
   white-space: pre-line;
 }
 
-
 #svg-main {
   display: block;
   width: 100%;
@@ -250,8 +248,6 @@ input[type='checkbox'] {
 .explanation p {
   margin: 10px 0;
 }
-
-
 
 [hidden] {
   display: none !important;
