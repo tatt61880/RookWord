@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <title>ルーク語 ツール</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
       content="五十音表をチェス盤に見立て、言葉がルークなどの駒の動きでつながるか判定します。移動経路の表示・画像保存・URL共有に対応。"
-    />
-    <link rel="icon" type="image/png" href="./images/favicon.png" />
+    >
+    <link rel="icon" type="image/png" href="./images/favicon.png">
     <link
       rel="apple-touch-icon"
       sizes="152x152"
       href="./images/apple-touch-icon.png?2023.09.16"
-    />
-    <link rel="stylesheet" href="./css/main.css" />
+    >
+    <link rel="stylesheet" href="./css/main.css">
     <script defer src="./src/analyze-url.js"></script>
     <script defer src="./src/analyze.js"></script>
     <script defer src="./src/main.js"></script>
@@ -76,7 +76,7 @@
           <p id="feedback" role="status"></p>
           <div id="share-field" hidden>
             <label for="share-url">共有URL</label>
-            <input id="share-url" type="text" readonly spellcheck="false" />
+            <input id="share-url" type="text" readonly spellcheck="false">
           </div>
         </div>
       </section>
@@ -85,11 +85,11 @@
         <h2 id="display-title">表示関連設定</h2>
         <div class="inner left options">
           <label
-            ><input type="checkbox" id="options-diamond" checked />
+            ><input type="checkbox" id="options-diamond" checked>
             始点と終点を◇にする</label
           >
           <label
-            ><input type="checkbox" id="options-arc" />
+            ><input type="checkbox" id="options-arc">
             線分の代わりに円弧で結ぶ</label
           >
         </div>
@@ -99,27 +99,27 @@
         <h2 id="judge-title">判定関連設定</h2>
         <div class="inner left options">
           <label
-            ><input type="checkbox" id="options-katakana" checked />
+            ><input type="checkbox" id="options-katakana" checked>
             カタカナをひらがなと同一視（半角も対応）</label
           >
           <label
-            ><input type="checkbox" id="options-small" checked />
+            ><input type="checkbox" id="options-small" checked>
             小さい仮名を大きい文字と同一視</label
           >
           <label
-            ><input type="checkbox" id="options-dakuten" checked />
+            ><input type="checkbox" id="options-dakuten" checked>
             濁点・半濁点を無視</label
           >
           <label
-            ><input type="checkbox" id="options-choonpu" checked />
+            ><input type="checkbox" id="options-choonpu" checked>
             伸ばし棒（ー）を直前の文字の母音として扱う</label
           >
           <label
-            ><input type="checkbox" id="options-samePos" checked />
+            ><input type="checkbox" id="options-samePos" checked>
             直前と同じ位置を許容</label
           >
           <label
-            ><input type="checkbox" id="options-ignoreSpace" checked />
+            ><input type="checkbox" id="options-ignoreSpace" checked>
             空白・改行・タブを無視</label
           >
           <label class="input-label" for="removed-text"
@@ -131,7 +131,7 @@
             placeholder="例: んを"
             spellcheck="false"
             aria-describedby="removed-help"
-          />
+          >
           <p id="removed-help" class="hint">
             除外した文字は「他」として扱います。仮名の設定も反映されます。
           </p>
@@ -144,7 +144,7 @@
         <div class="inner skyblue">
           <h3>♖ ルーク語 ♜</h3>
           <p>
-            五十音表をチェスの盤面と見立て、<br />ルークの駒が動いた時に成立する単語群。<br />例:
+            五十音表をチェスの盤面と見立て、<br>ルークの駒が動いた時に成立する単語群。<br>例:
             いあいぎり、かくう、ルークご、ツール
           </p>
           <p>
